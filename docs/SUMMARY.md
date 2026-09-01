@@ -18,7 +18,8 @@
   * [图像(Images)](openai/images/README.md)
     * [生成图像(generations)](openai/images/generations.md)
     * [编辑图像(edits)](openai/images/edits.md)
-
+    * [异步生图任务(async)](openai/images/async.md)
+  
   * [补全(Completions)](openai/completions/README.md)
   * [嵌入(Embeddings)](openai/embeddings/README.md)
   * [模型(Models)](openai/models/README.md)

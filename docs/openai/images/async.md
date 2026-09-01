@@ -1,25 +1,46 @@
 # 异步生图任务
 
-耗时较长的生成与编辑可走异步：提交后立即返回 task_id，任务成功后才扣费。
-编辑接口使用 POST /v1/images/edits/async，请求体相同。response_format 传 "b64_json" 可在任务结果中内联 base64；默认返回可直接下载的图片地址。
+耗时较长的生成与编辑可以使用异步,请求体参数相同
 
+异步生成图像:
+<div class="api-endpoint" role="group" aria-label="API endpoint">
+  <span class="api-endpoint__method">POST</span>
+  <code class="api-endpoint__path">/v1/images/generations/async</code>
+</div>
+
+异步编辑图像:
+<div class="api-endpoint" role="group" aria-label="API endpoint">
+  <span class="api-endpoint__method">POST</span>
+  <code class="api-endpoint__path">/v1/images/edits/async</code>
+</div>
+
+## 使用示例
+
+### 1. 创建异步任务
 ```shell
-# 1. 提交——立即返回 task_id
 curl https://10000router.com/v1/images/generations/async \
-  -H "Authorization: Bearer $NEW_API_KEY" \
+  -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"model": "gpt-image-2", "prompt": "a koi pond at sunset", "n": 1}'
-# => {"code":"success","data":"task_xxx"}
 ```
 
-```shell
-# 2. 轮询任务直到 status 为 SUCCESS
-curl https://10000router.com/v1/images/generations/task/{task_id} \
-  -H "Authorization: Bearer $NEW_API_KEY"
-```s
+> 返回结果:<br>
+> {"code":"success","data":"task_xxx"}
+
+### 2. 查询任务状态
 
 ```shell
-# 3. 下载结果（302 跳转到图片地址）
-curl -L https://10000router.com/v1/images/generations/task/{task_id}/content \
-  -H "Authorization: Bearer $NEW_API_KEY" -o result.png
+curl https://10000router.com/v1/images/generations/task/task_xxx \
+  -H "Authorization: Bearer $API_KEY"
+```
+
+> 返回结果:<br>
+> 
+
+### 3. 下载结果
+
+```shell
+# 302 跳转到图片地址
+curl -L https://10000router.com/v1/images/generations/task/task_xxx/content \
+  -H "Authorization: Bearer $API_KEY" -o result.png
 ```
