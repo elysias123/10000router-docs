@@ -1,0 +1,66 @@
+.markdown-section pre.has-copy-button {
+  position: relative;
+  overflow: visible;
+}
+
+.markdown-section pre.has-copy-button > code {
+  display: block;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre;
+  padding-right: 72px;
+}
+
+.code-copy-button {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 1px solid rgba(226, 232, 240, .2);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, .1);
+  color: #e5e7eb;
+  cursor: pointer;
+  line-height: 1;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.code-copy-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.code-copy-button:hover {
+  border-color: rgba(255, 255, 255, .4);
+  background: rgba(255, 255, 255, .18);
+}
+
+.code-copy-button:focus-visible {
+  outline: 2px solid #a78bfa;
+  outline-offset: 2px;
+}
+
+.code-copy-button.is-copied {
+  border-color: rgba(134, 239, 172, .45);
+  color: #bbf7d0;
+}
+
+.code-copy-button:disabled {
+  cursor: default;
+  opacity: .9;
+}

@@ -1,0 +1,9 @@
+{
+  "name": "gitbook-plugin-collapse",
+  "version": "1.0.0",
+  "description": "Add collapsible chapter groups to HonKit's default theme",
+  "main": "index.js",
+  "engines": {
+    "honkit": ">=6.0.0"
+  }
+}

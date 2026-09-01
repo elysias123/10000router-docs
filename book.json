@@ -1,0 +1,7 @@
+{
+    "root": "./docs",
+    "plugins": ["collapse", "code-copy", "highlight"],
+    "styles": {
+        "website": "styles/website.css"
+    }
+}

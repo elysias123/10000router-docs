@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "docs:serve": "honkit serve",
+    "dev": "honkit serve",
+    "docs:build": "honkit build"
+  },
+  "dependencies": {
+    "@honkit/honkit-plugin-highlight": "^6.2.2",
+    "gitbook-cli": "^2.3.2",
+    "honkit": "^6.2.2"
+  },
+  "devDependencies": {
+    "gitbook-plugin-collapse": "file:plugins/collapse",
+    "gitbook-plugin-code-copy": "file:plugins/code-copy"
+  }
+}

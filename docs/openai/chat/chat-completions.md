@@ -1,0 +1,429 @@
+
+# Chat Completions API
+
+<div class="api-endpoint" role="group" aria-label="API endpoint">
+  <span class="api-endpoint__method">POST</span>
+  <code class="api-endpoint__path">/v1/chat/completions</code>
+</div>
+
+## 请求参数
+
+### 请求头
+
+<details class="parameter-details" open>
+<summary>Authorization</summary>
+
+<div class="parameter-details__content">
+<p>使用 Bearer Token 认证。<br>
+格式: <code>Authorization: Bearer sk-xxxxxx</code></p>
+</div>
+</details>
+
+以下参数遵循 OpenAI Chat Completions 请求格式。参数是否可用取决于所选模型和兼容网关；网关不支持的字段会返回 `400`。
+
+### 请求体
+
+<details class="request-field-details">
+<summary>必填参数（2 个）</summary>
+
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>model</code></td><td>string</td><td>是</td><td>要调用的模型 ID。</td></tr>
+    <tr><td><code>messages</code></td><td>array</td><td>是</td><td>对话消息数组，按时间顺序传入。每条消息至少包含 <code>role</code> 和 <code>content</code>；常见角色包括 <code>system</code>、<code>user</code>、<code>assistant</code> 和 <code>tool</code>。</td></tr>
+  </tbody>
+</table>
+</div>
+</details>
+
+### 生成控制
+
+<details class="request-field-details">
+<summary>生成控制参数（10 个）</summary>
+
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>temperature</code></td><td>number</td><td>—</td><td>对 <code>gpt-5.6</code> 系列请求请勿传入此参数；其他模型是否支持取决于模型和兼容网关。</td></tr>
+    <tr><td><code>top_p</code></td><td>number</td><td>1</td><td>核采样范围，通常为 <code>0</code> 到 <code>1</code>。一般只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td></tr>
+    <tr><td><code>max_completion_tokens</code></td><td>integer</td><td>模型上限</td><td>限制本次请求生成的最大 token 数。支持推理的模型可能会将推理 token 计入此上限。</td></tr>
+    <tr><td><code>max_tokens</code></td><td>integer</td><td>—</td><td>旧版长度限制字段，部分新模型不支持；新请求优先使用 <code>max_completion_tokens</code>。</td></tr>
+    <tr><td><code>stop</code></td><td>string / array</td><td>null</td><td>命中停止序列后结束生成。部分模型不支持此参数。</td></tr>
+    <tr><td><code>n</code></td><td>integer</td><td>1</td><td>为每个输入生成的候选数量。大于 <code>1</code> 会按候选数量增加用量。</td></tr>
+    <tr><td><code>presence_penalty</code></td><td>number</td><td>0</td><td>根据已有内容惩罚重复主题，通常范围为 <code>-2</code> 到 <code>2</code>。</td></tr>
+    <tr><td><code>frequency_penalty</code></td><td>number</td><td>0</td><td>根据出现频率惩罚重复 token，通常范围为 <code>-2</code> 到 <code>2</code>。</td></tr>
+    <tr><td><code>logit_bias</code></td><td>object</td><td>null</td><td>按 token ID 调整生成概率，取值通常为 <code>-100</code> 到 <code>100</code>。</td></tr>
+    <tr><td><code>seed</code></td><td>integer</td><td>—</td><td>尽量复现结果的随机种子；只在支持的模型上生效，不能保证绝对一致。</td></tr>
+  </tbody>
+</table>
+</div>
+</details>
+
+### 输出格式与日志概率
+
+<details class="request-field-details">
+<summary>输出格式与日志概率（8 个）</summary>
+
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>response_format</code></td><td>object</td><td>设置输出格式。可使用 <code>{ "type": "text" }</code>、<code>{ "type": "json_object" }</code>，或使用 <code>json_schema</code> 约束 JSON 结构。</td></tr>
+    <tr><td><code>logprobs</code></td><td>boolean</td><td>是否返回输出 token 的对数概率。</td></tr>
+    <tr><td><code>top_logprobs</code></td><td>integer</td><td>每个位置返回的候选 token 数，通常为 <code>0</code> 到 <code>20</code>；需要同时开启 <code>logprobs</code>。</td></tr>
+    <tr><td><code>modalities</code></td><td>array</td><td>指定输出模态，例如 <code>["text"]</code> 或在模型支持时使用音频输出。</td></tr>
+    <tr><td><code>audio</code></td><td>object</td><td>音频输出配置，例如格式和 voice；仅适用于支持音频的模型。</td></tr>
+    <tr><td><code>prediction</code></td><td>object</td><td>已知大部分输出内容时提供预测内容，以减少响应延迟。</td></tr>
+    <tr><td><code>reasoning_effort</code></td><td>string</td><td>推理强度，例如 <code>low</code>、<code>medium</code>、<code>high</code>；仅适用于支持推理的模型。</td></tr>
+    <tr><td><code>service_tier</code></td><td>string</td><td>服务层级选择；是否生效取决于网关配置。</td></tr>
+  </tbody>
+</table>
+</div>
+</details>
+
+### 流式输出
+
+<details class="request-field-details">
+<summary>流式输出参数（2 个）</summary>
+
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>stream</code></td><td>boolean</td><td>设置为 <code>true</code> 时以 SSE 增量事件返回结果，默认 <code>false</code>。</td></tr>
+    <tr><td><code>stream_options</code></td><td>object</td><td>流式选项，例如 <code>{ "include_usage": true }</code> 用于请求最终用量统计。仅在 <code>stream=true</code> 时使用。</td></tr>
+  </tbody>
+</table>
+</div>
+</details>
+
+### 工具调用
+
+<details class="request-field-details">
+<summary>工具调用参数（5 个）</summary>
+
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>tools</code></td><td>array</td><td>声明模型可以调用的工具，目前最常见的是 <code>function</code> 工具。</td></tr>
+    <tr><td><code>tool_choice</code></td><td>string / object</td><td>控制工具调用策略：<code>none</code>、<code>auto</code>、<code>required</code>，或指定某个函数。</td></tr>
+    <tr><td><code>parallel_tool_calls</code></td><td>boolean</td><td>是否允许模型在一次响应中并行调用多个工具。</td></tr>
+    <tr><td><code>functions</code></td><td>array</td><td>旧版函数调用字段，已逐步由 <code>tools</code> 替代。</td></tr>
+    <tr><td><code>function_call</code></td><td>string / object</td><td>旧版函数调用控制字段，已逐步由 <code>tool_choice</code> 替代。</td></tr>
+  </tbody>
+</table>
+</div>
+</details>
+
+### 请求管理
+
+<details class="request-field-details">
+<summary>请求管理参数（3 个）</summary>
+
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>store</code></td><td>boolean</td><td>是否允许服务端保存此次响应；默认行为取决于模型和网关配置。</td></tr>
+    <tr><td><code>metadata</code></td><td>object</td><td>附加到请求的键值元数据，便于检索、统计或调试。</td></tr>
+    <tr><td><code>user</code></td><td>string</td><td>旧版终端用户标识字段；新项目请根据网关要求使用对应的安全标识字段。</td></tr>
+  </tbody>
+</table>
+</div>
+</details>
+
+### 请求体示例
+
+<details class="request-field-details request-example-details">
+<summary>查看 JSON 请求体示例</summary>
+
+<div class="request-field-details__content">
+<pre><code class="language-json">{
+  &quot;model&quot;: &quot;gpt-5.6-sol&quot;,
+  &quot;messages&quot;: [
+    { &quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;你是一个简洁的助手.&quot; },
+    { &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;介绍一下自己.&quot; }
+  ],
+  &quot;max_completion_tokens&quot;: 512,
+  &quot;response_format&quot;: { &quot;type&quot;: &quot;text&quot; },
+  &quot;stream&quot;: false
+}</code></pre>
+</div>
+</details>
+
+### 请求示例代码
+
+<div class="request-examples" role="group" aria-label="请求示例">
+  <input class="request-example-input" type="radio" name="request-example-language" id="request-example-curl" checked>
+  <input class="request-example-input" type="radio" name="request-example-language" id="request-example-javascript">
+  <input class="request-example-input" type="radio" name="request-example-language" id="request-example-go">
+  <input class="request-example-input" type="radio" name="request-example-language" id="request-example-python">
+  <input class="request-example-input" type="radio" name="request-example-language" id="request-example-java">
+  <input class="request-example-input" type="radio" name="request-example-language" id="request-example-csharp">
+  <div class="request-example-tabs" aria-label="选择编程语言">
+    <label for="request-example-curl">cURL</label>
+    <label for="request-example-javascript">JavaScript</label>
+    <label for="request-example-go">Go</label>
+    <label for="request-example-python">Python</label>
+    <label for="request-example-java">Java</label>
+    <label for="request-example-csharp">C#</label>
+  </div>
+  <div class="request-example-panels">
+    <div class="request-example-panel request-example-panel-curl">
+      <pre><code class="language-bash">curl -X POST "https://10000router.com/v1/chat/completions" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.6-sol",
+    "messages": [
+      { "role": "user", "content": "你好！" }
+    ]
+  }'</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-javascript">
+      <pre><code class="language-javascript">const response = await fetch("https://10000router.com/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    Authorization: "Bearer " + process.env.OPENAI_API_KEY,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "gpt-5.6-sol",
+    messages: [
+      { role: "user", content: "你好！" }
+    ]
+  })
+});
+console.log(await response.json());</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-go">
+      <pre><code class="language-go">payload := `{
+  "model": "gpt-5.6-sol",
+  "messages": [
+    { "role": "user", "content": "你好！" }
+  ]
+}`
+
+req, _ := http.NewRequest(
+  "POST",
+  "https://10000router.com/v1/chat/completions",
+  strings.NewReader(payload),
+)
+req.Header.Set("Authorization", "Bearer "+os.Getenv("OPENAI_API_KEY"))
+req.Header.Set("Content-Type", "application/json")
+res, _ := http.DefaultClient.Do(req)</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-python">
+      <pre><code class="language-python">import os
+import requests
+
+response = requests.post(
+    "https://10000router.com/v1/chat/completions",
+    headers={
+        "Authorization": "Bearer " + os.environ["OPENAI_API_KEY"],
+    },
+    json={
+        "model": "gpt-5.6-sol",
+        "messages": [
+            {"role": "user", "content": "你好！"},
+        ],
+    },
+)
+print(response.json())</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-java">
+      <pre><code class="language-java">var client = java.net.http.HttpClient.newHttpClient();
+var request = java.net.http.HttpRequest.newBuilder()
+    .uri(java.net.URI.create("https://10000router.com/v1/chat/completions"))
+    .header("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY"))
+    .header("Content-Type", "application/json")
+    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(
+        "{\"model\":\"gpt-5.6-sol\","
+            + "\"messages\":[{\"role\":\"user\",\"content\":\"你好！\"}]}"
+    ))
+    .build();
+var response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-csharp">
+      <pre><code class="language-csharp">using System.Net.Http.Json;
+using var client = new HttpClient();
+client.DefaultRequestHeaders.Authorization = new(
+    "Bearer",
+    Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+var response = await client.PostAsJsonAsync(
+    "https://10000router.com/v1/chat/completions",
+    new
+    {
+        model = "gpt-5.6-sol",
+        messages = new[]
+        {
+            new { role = "user", content = "你好！" }
+        }
+    });
+Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
+    </div>
+  </div>
+</div>
+
+
+## 返回响应
+
+### 响应示例
+
+<div class="response-status-tabs" role="group" aria-label="按 HTTP 状态码查看响应示例">
+  <input class="response-status-input" type="radio" name="response-status" id="response-status-200" checked>
+  <input class="response-status-input" type="radio" name="response-status" id="response-status-400">
+  <input class="response-status-input" type="radio" name="response-status" id="response-status-429">
+  <div class="response-status-tablist" aria-label="选择 HTTP 状态码查看响应示例">
+    <label for="response-status-200">200 成功</label>
+    <label for="response-status-400">400 请求错误</label>
+    <label for="response-status-429">429 请求频率限制</label>
+  </div>
+  <div class="response-status-panels">
+    <div class="response-status-panel response-status-panel-200">
+      <pre><code class="language-json">{
+  "id": "chatcmpl-abc123",
+  "object": "chat.completion",
+  "created": 1710000000,
+  "model": "gpt-5.6-sol",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "你好！"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 18,
+    "completion_tokens": 4,
+    "total_tokens": 22
+  },
+  "system_fingerprint": "fp_example"
+}</code></pre>
+    </div>
+    <div class="response-status-panel response-status-panel-400">
+      <pre><code class="language-json">{
+  "error": {
+    "message": "Missing required parameter: messages",
+    "type": "invalid_request_error",
+    "param": "messages",
+    "code": null
+  }
+}</code></pre>
+    </div>
+    <div class="response-status-panel response-status-panel-429">
+      <pre><code class="language-json">{
+  "error": {
+    "message": "Rate limit reached",
+    "type": "rate_limit_exceeded",
+    "param": null,
+    "code": null
+  }
+}</code></pre>
+    </div>
+  </div>
+</div>
+
+### 返回字段参数
+
+响应字段按对象层级拆分为可折叠区块。展开需要查看的对象，避免在阅读完整响应示例时被大量字段打断。
+
+<details class="response-field-details">
+<summary>顶层字段（7 个）</summary>
+
+<div class="response-field-details__content">
+<table>
+  <thead>
+    <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td>string</td><td>本次 Chat Completion 的唯一标识。</td></tr>
+    <tr><td><code>object</code></td><td>string</td><td>对象类型，非流式响应通常为 <code>chat.completion</code>。</td></tr>
+    <tr><td><code>created</code></td><td>integer</td><td>响应创建时间，Unix 时间戳（秒）。</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>实际生成响应的模型 ID。</td></tr>
+    <tr><td><code>choices</code></td><td>array&lt;object&gt;</td><td>模型生成的候选结果；数量由请求参数 <code>n</code> 决定。</td></tr>
+    <tr><td><code>usage</code></td><td>object</td><td>Token 用量统计。部分网关或流式中间响应可能不返回此字段。</td></tr>
+    <tr><td><code>system_fingerprint</code></td><td>string</td><td>服务端配置或模型版本指纹，可用于排查结果变化；部分模型或网关可能不返回。</td></tr>
+  </tbody>
+</table>
+</div>
+
+<details class="response-field-details">
+<summary><code>choices[]</code> 字段（4 个）</summary>
+
+<div class="response-field-details__content">
+<table>
+  <thead>
+    <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>index</code></td><td>integer</td><td>候选结果在 <code>choices</code> 数组中的索引。</td></tr>
+    <tr><td><code>message</code></td><td>object</td><td>助手消息。通常包含 <code>role: "assistant"</code> 和文本 <code>content</code>；工具调用时还可能包含 <code>tool_calls</code>。</td></tr>
+    <tr><td><code>logprobs</code></td><td>object / null</td><td>请求启用 <code>logprobs</code> 时返回的 token 对数概率信息，否则为 <code>null</code>。</td></tr>
+    <tr><td><code>finish_reason</code></td><td>string / null</td><td>生成结束原因，例如 <code>stop</code>、<code>length</code>、<code>tool_calls</code>、<code>content_filter</code>；生成尚未结束时可能为 <code>null</code>。</td></tr>
+  </tbody>
+</table>
+</div>
+
+<details class="response-field-details response-field-details-nested">
+<summary><code>choices[].message</code> 字段（5 个）</summary>
+
+<div class="response-field-details__content">
+<p><code>message</code> 可能包含以下字段：</p>
+<table>
+  <thead>
+    <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>role</code></td><td>string</td><td>消息角色，通常为 <code>assistant</code>。</td></tr>
+    <tr><td><code>content</code></td><td>string / null</td><td>文本内容；当响应仅包含工具调用或拒答时可能为 <code>null</code>。</td></tr>
+    <tr><td><code>refusal</code></td><td>string / null</td><td>模型拒答说明；未拒答时为 <code>null</code> 或省略。</td></tr>
+    <tr><td><code>tool_calls</code></td><td>array&lt;object&gt;</td><td>模型请求调用的工具及其参数。仅在模型选择工具调用时返回。</td></tr>
+    <tr><td><code>function_call</code></td><td>object</td><td>旧版函数调用字段，已由 <code>tool_calls</code> 逐步替代。</td></tr>
+  </tbody>
+</table>
+</div>
+
+</details>
+</details>
+
+<details class="response-field-details">
+<summary><code>usage</code> 字段（5 个）</summary>
+
+<div class="response-field-details__content">
+<table>
+  <thead>
+    <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>prompt_tokens</code></td><td>integer</td><td>输入消息使用的 token 数。</td></tr>
+    <tr><td><code>completion_tokens</code></td><td>integer</td><td>输出内容使用的 token 数。支持推理的模型可能包含推理 token。</td></tr>
+    <tr><td><code>total_tokens</code></td><td>integer</td><td><code>prompt_tokens</code> 与 <code>completion_tokens</code> 的总和。</td></tr>
+    <tr><td><code>prompt_tokens_details</code></td><td>object</td><td>输入 token 的细分统计，例如缓存 token；按模型和网关返回。</td></tr>
+    <tr><td><code>completion_tokens_details</code></td><td>object</td><td>输出 token 的细分统计，例如推理 token；按模型和网关返回。</td></tr>
+  </tbody>
+</table>
+</div>
+
+</details>
+</details>
+
+### 流式响应
+
+当请求设置 `stream=true` 时，响应为 Server-Sent Events（SSE），每个事件包含一个 `chat.completion.chunk` 对象，而不是上面的完整对象：
+
+```text
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1710000000,"model":"gpt-5.6-sol","choices":[{"index":0,"delta":{"role":"assistant","content":"你好"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-abc123","object":"chat.completion.chunk","created":1710000000,"model":"gpt-5.6-sol","choices":[{"index":0,"delta":{"content":"！"},"finish_reason":"stop"}]}
+
+data: [DONE]
+```
+
+客户端应按顺序拼接 `choices[].delta.content`。如果请求同时设置 `stream_options.include_usage=true`，结束事件前还会返回一个包含 `usage` 的统计块。
