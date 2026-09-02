@@ -7,10 +7,13 @@
 
 传统文本补全接口。接口根据 `prompt` 生成一个或多个文本候选，适用于兼容旧版 Completion 模型的场景。以下字段与 New API 的 `CompletionRequest` 保持一致；网关不支持的模型或取值会返回 `400`。
 
+该接口主要用于兼容旧版 Completion 模型。文中的 `gpt-3.5-turbo-instruct` 仅作为传统模型示例，实际可用模型以当前账号配置和上游渠道为准；新项目应优先评估 Chat Completions 或 Responses 接口。
+
 ## 请求参数
 
 ### 请求头
 
+<div class="parameter-details-group">
 <details class="parameter-details" open>
 <summary>Authorization</summary>
 
@@ -27,6 +30,8 @@
 <p>请求体使用 JSON 编码：<code>Content-Type: application/json</code>。</p>
 </div>
 </details>
+
+</div>
 
 ### 请求体
 

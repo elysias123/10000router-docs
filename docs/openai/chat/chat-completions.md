@@ -10,6 +10,7 @@
 
 ### 请求头
 
+<div class="parameter-details-group">
 <details class="parameter-details" open>
 <summary>Authorization</summary>
 
@@ -19,7 +20,11 @@
 </div>
 </details>
 
-请求体为 JSON 时请同时发送 <code>Content-Type: application/json</code>。
+<details class="parameter-details" open>
+<summary>Content-Type</summary>
+<div class="parameter-details__content"><p>请求体为 JSON 时请同时发送 <code>Content-Type: application/json</code>。</p></div>
+</details>
+</div>
 
 以下参数遵循 OpenAI Chat Completions 请求格式。参数是否可用取决于所选模型和兼容网关；网关不支持的字段会返回 `400`。
 

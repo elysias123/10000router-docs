@@ -11,6 +11,7 @@
 
 ### 请求头
 
+<div class="parameter-details-group">
 <details class="parameter-details" open>
 <summary>Authorization</summary>
 
@@ -26,6 +27,8 @@
 <p>请求体使用 JSON 编码：<code>Content-Type: application/json</code>。</p>
 </div>
 </details>
+
+</div>
 
 ### 请求体
 

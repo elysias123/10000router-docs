@@ -11,6 +11,7 @@ Responses 图像输入使用 `POST /v1/responses`，在 `input` 消息的 `conte
 
 ### 请求头
 
+<div class="parameter-details-group">
 <details class="parameter-details" open>
 <summary>Authorization</summary>
 
@@ -20,7 +21,11 @@ Responses 图像输入使用 `POST /v1/responses`，在 `input` 消息的 `conte
 </div>
 </details>
 
-请求体必须使用 <code>Content-Type: application/json</code>。
+<details class="parameter-details" open>
+<summary>Content-Type</summary>
+<div class="parameter-details__content"><p>请求体必须使用 <code>Content-Type: application/json</code>。</p></div>
+</details>
+</div>
 
 ### 请求体
 

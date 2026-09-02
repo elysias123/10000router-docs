@@ -1,6 +1,6 @@
 # 异步生图任务
 
-图像生成或编辑耗时较长时，可以使用 10000Router 提供的异步任务接口。提交请求会立即返回 `task_id`，任务成功后才计费。异步接口的生成参数与 [生成图像](generations.md) 相同，编辑参数与 [编辑图像](edits.md) 相同；NewAPI 支持的字段仍取决于模型和上游渠道。
+图像生成或编辑耗时较长时，可以使用 10000Router 提供的异步任务接口。提交请求会立即返回 `task_id`；计费时点以 10000Router 的实际计费规则为准。异步接口的生成参数与 [生成图像](generations.md) 相同，编辑参数与 [编辑图像](edits.md) 相同；NewAPI 支持的字段仍取决于模型和上游渠道。
 
 > **10000Router 扩展**：本页的异步路径、任务状态和结果下载协议是 10000Router 新增接口，不属于 OpenAI 官方 Images API。它们不能假设被标准 OpenAI SDK 直接支持。
 
@@ -39,11 +39,16 @@
 
 ## 请求头
 
-所有请求都需要 Bearer Token：
-
-```text
-Authorization: Bearer sk-xxxxxx
-```
+<div class="parameter-details-group">
+<details class="parameter-details" open>
+<summary>Authorization</summary>
+<div class="parameter-details__content"><p>所有请求都需要 Bearer Token。格式: <code>Authorization: Bearer sk-xxxxxx</code></p></div>
+</details>
+<details class="parameter-details" open>
+<summary>Content-Type</summary>
+<div class="parameter-details__content"><p>创建生成任务使用 <code>Content-Type: application/json</code>；创建编辑任务使用 <code>multipart/form-data</code>，由客户端自动生成 boundary。</p></div>
+</details>
+</div>
 
 ## 请求示例
 
@@ -127,7 +132,7 @@ curl "https://10000router.com/v1/images/generations/task/task_xxx" \
 
 ### 4. 下载结果
 
-任务完成后，结果接口会通过 HTTP 302 跳转到图片地址。使用 `-L` 跟随跳转并保存文件：
+当前实现中，任务完成后结果接口会通过 HTTP 302 跳转到图片地址。客户端如需自动跟随跳转，可使用 `-L` 并保存文件：
 
 <div class="api-endpoint" role="group" aria-label="下载异步图像结果">
   <span class="api-endpoint__method">GET</span>
@@ -140,7 +145,7 @@ curl -L "https://10000router.com/v1/images/generations/task/task_xxx/content" \
   -o result.png
 ```
 
-生成和编辑任务都使用上述 `generations/task/{task_id}/content` 下载路径。默认结果是可下载的图片地址；如果提交时将 `response_format` 设为 `b64_json`，任务结果会内联 Base64 数据，此时请从结果 JSON 中取出并在客户端解码，而不是调用二进制下载地址。下载接口返回图片二进制，具体 `Content-Type` 以任务结果为准。
+当前实现中，生成和编辑任务都使用上述 `generations/task/{task_id}/content` 下载路径。默认结果是可下载的图片地址；如果提交时将 `response_format` 设为 `b64_json`，任务结果会内联 Base64 数据，此时请从结果 JSON 中取出并在客户端解码，而不是调用二进制下载地址。下载接口返回图片二进制，具体 `Content-Type` 以任务结果为准。
 
 ### 错误响应
 

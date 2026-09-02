@@ -11,6 +11,7 @@
 
 ### 请求头
 
+<div class="parameter-details-group">
 <details class="parameter-details" open>
 <summary>Authorization</summary>
 
@@ -20,7 +21,13 @@
 </div>
 </details>
 
-请求体必须使用 `application/json`。下表为 NewAPI 文档当前列出的字段；字段是否对具体模型生效仍取决于上游渠道。
+<details class="parameter-details" open>
+<summary>Content-Type</summary>
+<div class="parameter-details__content"><p>请求体必须使用 <code>Content-Type: application/json</code>。</p></div>
+</details>
+</div>
+
+下表为 NewAPI 文档当前列出的字段；字段是否对具体模型生效仍取决于上游渠道。
 
 <details class="request-field-details" open>
 <summary>请求体字段（12 个）</summary>

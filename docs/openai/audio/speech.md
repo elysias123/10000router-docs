@@ -11,6 +11,7 @@
 
 ### 请求头
 
+<div class="parameter-details-group">
 <details class="parameter-details" open>
 <summary>Authorization</summary>
 
@@ -19,6 +20,12 @@
 格式: <code>Authorization: Bearer sk-xxxxxx</code></p>
 </div>
 </details>
+
+<details class="parameter-details" open>
+<summary>Content-Type</summary>
+<div class="parameter-details__content"><p>请求体必须使用 <code>Content-Type: application/json</code>。</p></div>
+</details>
+</div>
 
 ### 请求体
 
@@ -59,7 +66,7 @@
   <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
   <tbody>
     <tr><td><code>instructions</code></td><td>string</td><td>对语气、风格或发音的额外指导。</td></tr>
-    <tr><td><code>stream_format</code></td><td>string</td><td>设置为 <code>sse</code> 时请求流式音频事件；仅在模型和网关支持时可用。</td></tr>
+    <tr><td><code>stream_format</code>（网关扩展）</td><td>string</td><td>设置为 <code>sse</code> 时请求流式音频事件；仅在模型和网关支持时可用。</td></tr>
     <tr><td><code>metadata</code></td><td>object</td><td>附加的键值元数据。</td></tr>
   </tbody>
 </table>

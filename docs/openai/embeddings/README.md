@@ -11,6 +11,7 @@
 
 ### 请求头
 
+<div class="parameter-details-group">
 <details class="parameter-details" open>
 <summary>Authorization</summary>
 
@@ -19,6 +20,12 @@
 格式: <code>Authorization: Bearer sk-xxxxxx</code></p>
 </div>
 </details>
+
+<details class="parameter-details" open>
+<summary>Content-Type</summary>
+<div class="parameter-details__content"><p>请求体必须使用 <code>Content-Type: application/json</code>。</p></div>
+</details>
+</div>
 
 ### 请求体
 

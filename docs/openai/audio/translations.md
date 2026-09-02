@@ -5,7 +5,7 @@
   <code class="api-endpoint__path">/v1/audio/translations</code>
 </div>
 
-使用 `multipart/form-data` 将音频翻译成英文文本。请求需要 `Authorization: Bearer <API_KEY>`；参数是否可用取决于所选模型和兼容网关。
+使用 `multipart/form-data` 将音频翻译成英文文本；该接口的目标语言固定为英语，不提供任意目标语言参数。请求需要 `Authorization: Bearer <API_KEY>`；参数是否可用取决于所选模型和兼容网关。
 
 ## 请求参数
 
