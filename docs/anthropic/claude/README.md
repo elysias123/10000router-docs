@@ -1,0 +1,3 @@
+### 原生Claude格式
+
+Anthropic Claude Messages API 格式的请求。 需要在请求头中包含 anthropic-version。
