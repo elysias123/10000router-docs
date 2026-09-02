@@ -1,10 +1,11 @@
 # Summary
 
-* [项目说明](README.md)
+* [介绍](README.md)
 
 ## AI 模型接口
 
-* [openai](openai/README.md)
+* [获取模型列表](models/README.md)
+* [OpenAI](openai/README.md)
   * [音频(Audio)](openai/audio/README.md)
     * [文本转语言(speech)](openai/audio/speech.md)
     * [音频转录(transcriptions)](openai/audio/transcriptions.md)
@@ -22,9 +23,17 @@
   
   * [补全(Completions)](openai/completions/README.md)
   * [嵌入(Embeddings)](openai/embeddings/README.md)
-  * [模型(Models)](openai/models/README.md)
   * [审查(Moderations)](openai/moderations/README.md)
-  * [实时语音(Realtime)](openai/realtime/README.md)
-  * [文件(Files，未实现)](openai/files/README.md)
-  * [微调(Fine-tuning，未实现)](openai/fine-tuning/README.md)
-  * [视频(OpenAI / Sora)](openai/videos/README.md)
+* [Anthropic](anthropic/README.md)
+  * [Claude格式(messages)](anthropic/claude/README.md)
+* [Gemini](gemini/README.md)
+  * [聊天(chat)](gemini/chat/README.md)
+    * [媒体识别](gemini/chat/media/README.md)
+    * [文本聊天](gemini/chat/text/README.md)
+  * [音频(audio)](gemini/audio/README.md)
+  * [嵌入(embeddings)](gemini/embeddings/README.md)
+  * [图像(images)](gemini/images/README.md)
+* [图像生成(images)](images/README.md)
+  * [图像生成格式(messages)](images/messages/README.md)
+* [视频生成(videos)](videos/README.md)
+  * [视频生成格式(messages)](videos/messages/README.md)
