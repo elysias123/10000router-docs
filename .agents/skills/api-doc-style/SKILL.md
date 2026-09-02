@@ -10,6 +10,7 @@ Use this skill for every new or revised HTTP API page in this repository, includ
 ## Source of truth
 
 - Content: the requested API page under `docs/`
+- Endpoint contract and interface description: `D:\project\new-api-docs-v1` (use the corresponding NewAPI endpoint definition as the reference; do not invent unsupported behavior)
 - Theme: `docs/styles/website.css`
 - Build check: `pnpm docs:build`
 
@@ -19,16 +20,40 @@ Preserve this shared order unless the endpoint has no applicable section or the 
 
 1. `h1` page title.
 2. `.api-endpoint` row containing the HTTP method and path.
-3. `## 请求参数`: request headers, required fields, endpoint-specific option groups, a JSON body/form-data example when applicable, and language examples.
-4. `## 返回响应`: status-code examples, response fields, and streaming/events when applicable.
+3. A concise interface-description paragraph immediately below the `.api-endpoint` row. Base it on the corresponding NewAPI endpoint description and supported schema; summarize the endpoint's purpose, request format, and important compatibility caveats using inline code for field names, types, and protocol values.
+4. `## 请求参数`: request headers, required fields, endpoint-specific option groups, a JSON body/form-data example when applicable, and language examples.
+5. `## 返回响应`: status-code examples, response fields, and streaming/events when applicable.
+
+The required visual order is `h1` → endpoint row → description paragraph → request sections, matching the reference layout. Keep the description directly adjacent to the endpoint: do not place request-header cards, request-body tables, extra headings, or code blocks between the endpoint row and this paragraph. Use one or two paragraphs only; avoid repeating the full parameter table or language examples in the description.
 
 Use `h2` for the request/response regions and `h3` for their subsections. Keep field names and protocol values in inline backticks.
 
 Each API should document only the fields, payload format, authentication, and transport modes that its endpoint supports. Do not copy endpoint-specific sections into unrelated APIs. OpenAI-compatible pages may use message fields, tools, or SSE; other APIs should use their own domain vocabulary.
 
+## Category README conventions
+
+- Top-level and functional-category `README.md` pages contain only a brief category introduction and an interface index.
+- Keep index entries to the linked interface name only; do not append purpose, method, request format, authentication, parameter, response, or compatibility explanations.
+- Put endpoint details, examples, and protocol caveats in the leaf endpoint page. A `README.md` that is itself a leaf endpoint remains a full endpoint page.
+
 ## Interactive blocks
 
 - Use native `<details class="parameter-details" open>` for short header or explanatory cards.
+- When an endpoint has multiple related request headers, wrap all header `<details>` blocks in one `<div class="parameter-details-group">` so they render as a single connected card (as in the stacked request-header design): each header remains its own independently expandable row, rows are separated by the group's dividers, and header details should not add outer margins, borders, or shadows of their own. Keep the details `open` by default unless the page explicitly needs a collapsed state. A single request header may remain a standalone `.parameter-details` card.
+- Use this structure for grouped request headers:
+
+  ```html
+  <div class="parameter-details-group">
+  <details class="parameter-details" open>
+  <summary>Authorization</summary>
+  <div class="parameter-details__content">...</div>
+  </details>
+  <details class="parameter-details" open>
+  <summary>x-api-key [optional]</summary>
+  <div class="parameter-details__content">...</div>
+  </details>
+  </div>
+  ```
 - Use `<details class="request-field-details" open>` for request field groups and `<details class="response-field-details" open>` for response object levels. Nested response objects may add `response-field-details-nested`.
 - Keep tables inside the corresponding `__content` wrapper and use the existing three- or four-column field-table pattern.
 - Request language examples should use the existing radio/label structure and six panel classes (`curl`, `javascript`, `go`, `python`, `java`, `csharp`) when a request body is meaningful. Keep one panel visible by default (`cURL`). For endpoints that use multipart or binary payloads, retain the same card and Tab treatment while showing the idiomatic request format.
