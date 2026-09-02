@@ -37,7 +37,7 @@
   transform: rotate(90deg);
 }
 
-.book-summary li.chapter.has-children > ul.articles {
+.book-summary li.chapter > ul.articles {
   display: none !important;
 }
 

@@ -53,9 +53,9 @@
         item.insertBefore(button, link);
       }
 
-      var hasActiveChild = !!children.querySelector("li.active");
-      var isActiveParent = item.classList.contains("active");
-      setExpanded(item, hasActiveChild || isActiveParent);
+      // Keep every chapter collapsed on initialization. Users can expand a
+      // group explicitly with its toggle button.
+      setExpanded(item, false);
     });
   }
 

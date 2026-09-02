@@ -48,3 +48,4 @@ apifox-local.png
 .env
 .env.*
 !.env.example
+.playwright-mcp

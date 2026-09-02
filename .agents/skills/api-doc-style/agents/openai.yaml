@@ -1,0 +1,4 @@
+interface:
+  display_name: "API Doc Style"
+  short_description: "Keep project API docs structurally and visually consistent"
+  default_prompt: "Create or edit an HTTP API page using this project's documentation style."
