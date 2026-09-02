@@ -19,11 +19,13 @@
 </div>
 </details>
 
+请求体为 JSON 时请同时发送 <code>Content-Type: application/json</code>。
+
 以下参数遵循 OpenAI Chat Completions 请求格式。参数是否可用取决于所选模型和兼容网关；网关不支持的字段会返回 `400`。
 
 ### 请求体
 
-<details class="request-field-details">
+<details class="request-field-details" open>
 <summary>必填参数（2 个）</summary>
 
 <div class="request-field-details__content">
@@ -37,55 +39,108 @@
 </div>
 </details>
 
+### 消息字段
+
+`messages` 是按时间顺序排列的消息数组。NewAPI 会保留下列字段并按所选上游适配器进行转换；不同模型对多模态内容和推理字段的支持不同。
+
+<details class="request-field-details" open>
+<summary>消息对象字段（6 个）</summary>
+
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>role</code></td><td>string</td><td>消息角色，通常为 <code>system</code>、<code>developer</code>、<code>user</code>、<code>assistant</code> 或 <code>tool</code>。</td></tr>
+    <tr><td><code>content</code></td><td>string / array</td><td>文本，或内容块数组。内容块可使用 <code>text</code>、<code>image_url</code>、<code>input_audio</code>、<code>file</code> 和 <code>video_url</code>。</td></tr>
+    <tr><td><code>name</code></td><td>string</td><td>可选的参与者名称。</td></tr>
+    <tr><td><code>reasoning_content</code></td><td>string</td><td>向兼容推理模型传递的推理内容；请勿在不需要时回传隐藏推理。</td></tr>
+    <tr><td><code>tool_calls</code></td><td>array</td><td>助手消息发起的工具调用。通常与 <code>role: "assistant"</code> 一起回传。</td></tr>
+    <tr><td><code>tool_call_id</code></td><td>string</td><td>工具消息对应的调用 ID，必须与助手消息中的工具调用匹配。</td></tr>
+  </tbody>
+</table>
+</div>
+</details>
+
+内容块示例：
+
+```json
+{
+  "role": "user",
+  "content": [
+    { "type": "text", "text": "描述这张图片" },
+    { "type": "image_url", "image_url": { "url": "https://example.com/image.png", "detail": "auto" } }
+  ]
+}
+```
+
+内容块字段按 NewAPI OpenAPI 定义如下：
+
+| 类型 | 字段 | 类型/取值 | 说明 |
+| --- | --- | --- | --- |
+| `text` | `text` | string | 文本内容。 |
+| `image_url` | `image_url.url` | string | 图片 URL 或 base64 数据。 |
+| `image_url` | `image_url.detail` | `low` / `high` / `auto` | 图片细节级别。 |
+| `input_audio` | `input_audio.data` | string | Base64 编码的音频数据。 |
+| `input_audio` | `input_audio.format` | `wav` / `mp3` | 音频格式。 |
+| `file` | `file.filename` | string | 文件名。 |
+| `file` | `file.file_data` | string | 文件数据。 |
+| `file` | `file.file_id` | string | 已上传文件 ID。 |
+| `video_url` | `video_url.url` | string | 视频 URL。 |
+
 ### 生成控制
 
-<details class="request-field-details">
+<details class="request-field-details" open>
 <summary>生成控制参数（10 个）</summary>
 
 <div class="request-field-details__content">
 <table>
   <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
   <tbody>
-    <tr><td><code>temperature</code></td><td>number</td><td>—</td><td>对 <code>gpt-5.6</code> 系列请求请勿传入此参数；其他模型是否支持取决于模型和兼容网关。</td></tr>
-    <tr><td><code>top_p</code></td><td>number</td><td>1</td><td>核采样范围，通常为 <code>0</code> 到 <code>1</code>。一般只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td></tr>
+    <tr><td><code>temperature</code></td><td>number</td><td>1</td><td>采样温度，范围 <code>0</code> 到 <code>2</code>。是否支持取决于模型。</td></tr>
+    <tr><td><code>top_p</code></td><td>number</td><td>1</td><td>核采样参数，范围 <code>0</code> 到 <code>1</code>。一般只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td></tr>
     <tr><td><code>max_completion_tokens</code></td><td>integer</td><td>模型上限</td><td>限制本次请求生成的最大 token 数。支持推理的模型可能会将推理 token 计入此上限。</td></tr>
     <tr><td><code>max_tokens</code></td><td>integer</td><td>—</td><td>旧版长度限制字段，部分新模型不支持；新请求优先使用 <code>max_completion_tokens</code>。</td></tr>
     <tr><td><code>stop</code></td><td>string / array</td><td>null</td><td>命中停止序列后结束生成。部分模型不支持此参数。</td></tr>
-    <tr><td><code>n</code></td><td>integer</td><td>1</td><td>为每个输入生成的候选数量。大于 <code>1</code> 会按候选数量增加用量。</td></tr>
+    <tr><td><code>n</code></td><td>integer</td><td>1</td><td>为每个输入生成的候选数量，最小值为 <code>1</code>。大于 <code>1</code> 会按候选数量增加用量。</td></tr>
     <tr><td><code>presence_penalty</code></td><td>number</td><td>0</td><td>根据已有内容惩罚重复主题，通常范围为 <code>-2</code> 到 <code>2</code>。</td></tr>
     <tr><td><code>frequency_penalty</code></td><td>number</td><td>0</td><td>根据出现频率惩罚重复 token，通常范围为 <code>-2</code> 到 <code>2</code>。</td></tr>
-    <tr><td><code>logit_bias</code></td><td>object</td><td>null</td><td>按 token ID 调整生成概率，取值通常为 <code>-100</code> 到 <code>100</code>。</td></tr>
+    <tr><td><code>logit_bias</code></td><td>object</td><td>null</td><td>以 token ID 为键、数值为值调整生成概率。</td></tr>
     <tr><td><code>seed</code></td><td>integer</td><td>—</td><td>尽量复现结果的随机种子；只在支持的模型上生效，不能保证绝对一致。</td></tr>
   </tbody>
 </table>
 </div>
 </details>
 
-### 输出格式与日志概率
+### 输出格式与推理
 
-<details class="request-field-details">
-<summary>输出格式与日志概率（8 个）</summary>
+<details class="request-field-details" open>
+<summary>输出格式与推理（4 个）</summary>
 
 <div class="request-field-details__content">
 <table>
   <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
   <tbody>
     <tr><td><code>response_format</code></td><td>object</td><td>设置输出格式。可使用 <code>{ "type": "text" }</code>、<code>{ "type": "json_object" }</code>，或使用 <code>json_schema</code> 约束 JSON 结构。</td></tr>
-    <tr><td><code>logprobs</code></td><td>boolean</td><td>是否返回输出 token 的对数概率。</td></tr>
-    <tr><td><code>top_logprobs</code></td><td>integer</td><td>每个位置返回的候选 token 数，通常为 <code>0</code> 到 <code>20</code>；需要同时开启 <code>logprobs</code>。</td></tr>
-    <tr><td><code>modalities</code></td><td>array</td><td>指定输出模态，例如 <code>["text"]</code> 或在模型支持时使用音频输出。</td></tr>
-    <tr><td><code>audio</code></td><td>object</td><td>音频输出配置，例如格式和 voice；仅适用于支持音频的模型。</td></tr>
-    <tr><td><code>prediction</code></td><td>object</td><td>已知大部分输出内容时提供预测内容，以减少响应延迟。</td></tr>
-    <tr><td><code>reasoning_effort</code></td><td>string</td><td>推理强度，例如 <code>low</code>、<code>medium</code>、<code>high</code>；仅适用于支持推理的模型。</td></tr>
-    <tr><td><code>service_tier</code></td><td>string</td><td>服务层级选择；是否生效取决于网关配置。</td></tr>
+    <tr><td><code>modalities</code></td><td>array</td><td>指定输出模态，可选 <code>text</code> 或 <code>audio</code>。</td></tr>
+    <tr><td><code>audio</code></td><td>object</td><td>音频输出配置，包含 <code>voice</code> 和 <code>format</code>；仅适用于支持音频的模型。</td></tr>
+    <tr><td><code>reasoning_effort</code></td><td>string</td><td>推理强度，可选 <code>low</code>、<code>medium</code>、<code>high</code>；仅适用于支持推理的模型。</td></tr>
   </tbody>
 </table>
 </div>
 </details>
 
+音频输出配置示例：
+
+```json
+{
+  "modalities": ["text", "audio"],
+  "audio": { "voice": "alloy", "format": "wav" }
+}
+```
+
 ### 流式输出
 
-<details class="request-field-details">
+<details class="request-field-details" open>
 <summary>流式输出参数（2 个）</summary>
 
 <div class="request-field-details__content">
@@ -101,8 +156,8 @@
 
 ### 工具调用
 
-<details class="request-field-details">
-<summary>工具调用参数（5 个）</summary>
+<details class="request-field-details" open>
+<summary>工具调用参数（2 个）</summary>
 
 <div class="request-field-details__content">
 <table>
@@ -110,25 +165,50 @@
   <tbody>
     <tr><td><code>tools</code></td><td>array</td><td>声明模型可以调用的工具，目前最常见的是 <code>function</code> 工具。</td></tr>
     <tr><td><code>tool_choice</code></td><td>string / object</td><td>控制工具调用策略：<code>none</code>、<code>auto</code>、<code>required</code>，或指定某个函数。</td></tr>
-    <tr><td><code>parallel_tool_calls</code></td><td>boolean</td><td>是否允许模型在一次响应中并行调用多个工具。</td></tr>
-    <tr><td><code>functions</code></td><td>array</td><td>旧版函数调用字段，已逐步由 <code>tools</code> 替代。</td></tr>
-    <tr><td><code>function_call</code></td><td>string / object</td><td>旧版函数调用控制字段，已逐步由 <code>tool_choice</code> 替代。</td></tr>
   </tbody>
 </table>
 </div>
 </details>
 
+工具定义使用 `type` 和 `function` 对象。`function` 至少需要 `name`；可选 `description` 和 `parameters`（JSON Schema）。
+
+```json
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "查询指定城市的天气",
+        "parameters": {
+          "type": "object",
+          "properties": { "city": { "type": "string" } },
+          "required": ["city"]
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto"
+}
+```
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `tools[].type` | string | 工具类型，当前示例为 `function`。 |
+| `tools[].function.name` | string | 函数名称。 |
+| `tools[].function.description` | string | 函数用途说明。 |
+| `tools[].function.parameters` | object | JSON Schema 格式的参数定义。 |
+| `tool_choice` | string / object | `none`、`auto`、`required`，或 `{ "type": "function", "function": { "name": "..." } }`。 |
+
 ### 请求管理
 
-<details class="request-field-details">
-<summary>请求管理参数（3 个）</summary>
+<details class="request-field-details" open>
+<summary>请求管理参数（1 个）</summary>
 
 <div class="request-field-details__content">
 <table>
   <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
   <tbody>
-    <tr><td><code>store</code></td><td>boolean</td><td>是否允许服务端保存此次响应；默认行为取决于模型和网关配置。</td></tr>
-    <tr><td><code>metadata</code></td><td>object</td><td>附加到请求的键值元数据，便于检索、统计或调试。</td></tr>
     <tr><td><code>user</code></td><td>string</td><td>旧版终端用户标识字段；新项目请根据网关要求使用对应的安全标识字段。</td></tr>
   </tbody>
 </table>
@@ -137,7 +217,7 @@
 
 ### 请求体示例
 
-<details class="request-field-details request-example-details">
+<details class="request-field-details request-example-details" open>
 <summary>查看 JSON 请求体示例</summary>
 
 <div class="request-field-details__content">
@@ -179,23 +259,33 @@
   -d '{
     "model": "gpt-5.6-sol",
     "messages": [
-      { "role": "user", "content": "你好！" }
-    ]
+      { "role": "system", "content": "You are a concise assistant." },
+      { "role": "user", "content": "Introduce yourself." }
+    ],
+    "max_completion_tokens": 512,
+    "response_format": { "type": "text" },
+    "stream": false
   }'</code></pre>
     </div>
     <div class="request-example-panel request-example-panel-javascript">
-      <pre><code class="language-javascript">const response = await fetch("https://10000router.com/v1/chat/completions", {
+      <pre><code class="language-javascript">const payload = {
+  model: "gpt-5.6-sol",
+  messages: [
+    { role: "system", content: "You are a concise assistant." },
+    { role: "user", content: "Introduce yourself." }
+  ],
+  max_completion_tokens: 512,
+  response_format: { type: "text" },
+  stream: false
+};
+
+const response = await fetch("https://10000router.com/v1/chat/completions", {
   method: "POST",
   headers: {
     Authorization: "Bearer " + process.env.OPENAI_API_KEY,
     "Content-Type": "application/json"
   },
-  body: JSON.stringify({
-    model: "gpt-5.6-sol",
-    messages: [
-      { role: "user", content: "你好！" }
-    ]
-  })
+  body: JSON.stringify(payload)
 });
 console.log(await response.json());</code></pre>
     </div>
@@ -203,66 +293,93 @@ console.log(await response.json());</code></pre>
       <pre><code class="language-go">payload := `{
   "model": "gpt-5.6-sol",
   "messages": [
-    { "role": "user", "content": "你好！" }
-  ]
+    { "role": "system", "content": "You are a concise assistant." },
+    { "role": "user", "content": "Introduce yourself." }
+  ],
+  "max_completion_tokens": 512,
+  "response_format": { "type": "text" },
+  "stream": false
 }`
-
-req, _ := http.NewRequest(
-  "POST",
-  "https://10000router.com/v1/chat/completions",
-  strings.NewReader(payload),
-)
+req, err := http.NewRequest("POST", "https://10000router.com/v1/chat/completions", strings.NewReader(payload))
+if err != nil {
+  log.Fatal(err)
+}
 req.Header.Set("Authorization", "Bearer "+os.Getenv("OPENAI_API_KEY"))
 req.Header.Set("Content-Type", "application/json")
-res, _ := http.DefaultClient.Do(req)</code></pre>
+res, err := http.DefaultClient.Do(req)
+if err != nil {
+  log.Fatal(err)
+}
+defer res.Body.Close()</code></pre>
     </div>
     <div class="request-example-panel request-example-panel-python">
       <pre><code class="language-python">import os
 import requests
 
+payload = {
+    "model": "gpt-5.6-sol",
+    "messages": [
+        {"role": "system", "content": "You are a concise assistant."},
+        {"role": "user", "content": "Introduce yourself."}
+    ],
+    "max_completion_tokens": 512,
+    "response_format": {"type": "text"},
+    "stream": False
+}
+
 response = requests.post(
     "https://10000router.com/v1/chat/completions",
     headers={
         "Authorization": "Bearer " + os.environ["OPENAI_API_KEY"],
+        "Content-Type": "application/json"
     },
-    json={
-        "model": "gpt-5.6-sol",
-        "messages": [
-            {"role": "user", "content": "你好！"},
-        ],
-    },
+    json=payload
 )
 print(response.json())</code></pre>
     </div>
     <div class="request-example-panel request-example-panel-java">
       <pre><code class="language-java">var client = java.net.http.HttpClient.newHttpClient();
+var payload = "{"
+    + "\"model\":\"gpt-5.6-sol\","
+    + "\"messages\":["
+    + "{\"role\":\"system\",\"content\":\"You are a concise assistant.\"},"
+    + "{\"role\":\"user\",\"content\":\"Introduce yourself.\"}"
+    + "],\"max_completion_tokens\":512,"
+    + "\"response_format\":{\"type\":\"text\"},\"stream\":false}";
 var request = java.net.http.HttpRequest.newBuilder()
     .uri(java.net.URI.create("https://10000router.com/v1/chat/completions"))
     .header("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY"))
     .header("Content-Type", "application/json")
-    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(
-        "{\"model\":\"gpt-5.6-sol\","
-            + "\"messages\":[{\"role\":\"user\",\"content\":\"你好！\"}]}"
-    ))
+    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(payload))
     .build();
 var response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());</code></pre>
     </div>
     <div class="request-example-panel request-example-panel-csharp">
       <pre><code class="language-csharp">using System.Net.Http.Json;
+
 using var client = new HttpClient();
 client.DefaultRequestHeaders.Authorization = new(
     "Bearer",
-    Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+    Environment.GetEnvironmentVariable("OPENAI_API_KEY")
+);
+
+var payload = new
+{
+    model = "gpt-5.6-sol",
+    messages = new[]
+    {
+        new { role = "system", content = "You are a concise assistant." },
+        new { role = "user", content = "Introduce yourself." }
+    },
+    max_completion_tokens = 512,
+    response_format = new { type = "text" },
+    stream = false
+};
+
 var response = await client.PostAsJsonAsync(
     "https://10000router.com/v1/chat/completions",
-    new
-    {
-        model = "gpt-5.6-sol",
-        messages = new[]
-        {
-            new { role = "user", content = "你好！" }
-        }
-    });
+    payload
+);
 Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
     </div>
   </div>
@@ -332,9 +449,9 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
 
 ### 返回字段参数
 
-响应字段按对象层级拆分为可折叠区块。展开需要查看的对象，避免在阅读完整响应示例时被大量字段打断。
+响应字段按对象层级拆分为可折叠区块，默认展开；可收起暂时不关注的对象，减少长响应的视觉干扰。
 
-<details class="response-field-details">
+<details class="response-field-details" open>
 <summary>顶层字段（7 个）</summary>
 
 <div class="response-field-details__content">
@@ -354,7 +471,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
 </table>
 </div>
 
-<details class="response-field-details">
+<details class="response-field-details" open>
 <summary><code>choices[]</code> 字段（4 个）</summary>
 
 <div class="response-field-details__content">
@@ -366,13 +483,13 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
     <tr><td><code>index</code></td><td>integer</td><td>候选结果在 <code>choices</code> 数组中的索引。</td></tr>
     <tr><td><code>message</code></td><td>object</td><td>助手消息。通常包含 <code>role: "assistant"</code> 和文本 <code>content</code>；工具调用时还可能包含 <code>tool_calls</code>。</td></tr>
     <tr><td><code>logprobs</code></td><td>object / null</td><td>请求启用 <code>logprobs</code> 时返回的 token 对数概率信息，否则为 <code>null</code>。</td></tr>
-    <tr><td><code>finish_reason</code></td><td>string / null</td><td>生成结束原因，例如 <code>stop</code>、<code>length</code>、<code>tool_calls</code>、<code>content_filter</code>；生成尚未结束时可能为 <code>null</code>。</td></tr>
+    <tr><td><code>finish_reason</code></td><td>string</td><td>生成结束原因：<code>stop</code>、<code>length</code>、<code>tool_calls</code> 或 <code>content_filter</code>。流式中间事件尚未结束时可能为 <code>null</code>。</td></tr>
   </tbody>
 </table>
 </div>
 
-<details class="response-field-details response-field-details-nested">
-<summary><code>choices[].message</code> 字段（5 个）</summary>
+<details class="response-field-details response-field-details-nested" open>
+<summary><code>choices[].message</code> 字段（6 个）</summary>
 
 <div class="response-field-details__content">
 <p><code>message</code> 可能包含以下字段：</p>
@@ -382,10 +499,11 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
   </thead>
   <tbody>
     <tr><td><code>role</code></td><td>string</td><td>消息角色，通常为 <code>assistant</code>。</td></tr>
-    <tr><td><code>content</code></td><td>string / null</td><td>文本内容；当响应仅包含工具调用或拒答时可能为 <code>null</code>。</td></tr>
-    <tr><td><code>refusal</code></td><td>string / null</td><td>模型拒答说明；未拒答时为 <code>null</code> 或省略。</td></tr>
+    <tr><td><code>content</code></td><td>string / array</td><td>文本或内容块数组；当响应仅包含工具调用时可能为空或由网关省略。</td></tr>
+    <tr><td><code>name</code></td><td>string</td><td>发送者名称；部分模型响应中会返回。</td></tr>
     <tr><td><code>tool_calls</code></td><td>array&lt;object&gt;</td><td>模型请求调用的工具及其参数。仅在模型选择工具调用时返回。</td></tr>
-    <tr><td><code>function_call</code></td><td>object</td><td>旧版函数调用字段，已由 <code>tool_calls</code> 逐步替代。</td></tr>
+    <tr><td><code>tool_call_id</code></td><td>string</td><td>工具调用 ID；工具消息用于对应此前的调用。</td></tr>
+    <tr><td><code>reasoning_content</code></td><td>string</td><td>支持推理模型时返回的推理内容。</td></tr>
   </tbody>
 </table>
 </div>
@@ -393,7 +511,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
 </details>
 </details>
 
-<details class="response-field-details">
+<details class="response-field-details" open>
 <summary><code>usage</code> 字段（5 个）</summary>
 
 <div class="response-field-details__content">
