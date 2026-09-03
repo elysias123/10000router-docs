@@ -182,6 +182,7 @@ html, body {
 .markdown-section table {
   display: table;
   width: 100%;
+  table-layout: fixed;
   margin: 18px 0 26px;
   border: 1px solid var(--doc-border);
   border-radius: 10px;
@@ -203,6 +204,53 @@ html, body {
   padding: 11px 14px;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+/* Give description-heavy tables the widest column by default. Request tables
+ * below override these values according to their four- or five-column shape. */
+.markdown-section table tr > :nth-child(1) { width: 24%; }
+.markdown-section table tr > :nth-child(2) { width: 18%; }
+.markdown-section table tr > :nth-child(3) { width: 58%; }
+
+/* Fluid column proportions for request tables. The five-column variant is
+ * selected by its header shape, so the same rules work for every endpoint. */
+.request-field-details__content table {
+  --table-col-1: 24%;
+  --table-col-2: 16%;
+  --table-col-3: 46%;
+  --table-col-4: 14%;
+}
+
+.request-field-details__content table:has(thead th:nth-child(5)):not(.message-fields-table) {
+  --table-col-1: 21%;
+  --table-col-2: 12%;
+  --table-col-3: 13%;
+  --table-col-4: 42%;
+  --table-col-5: 12%;
+}
+
+/* The messages table has a value column containing several inline code
+ * labels. Give that column enough fluid space to avoid tall, fragmented rows. */
+.request-field-details__content table.message-fields-table {
+  --table-col-1: 20%;
+  --table-col-2: 12%;
+  --table-col-3: 24%;
+  --table-col-4: 32%;
+  --table-col-5: 12%;
+}
+
+.request-field-details__content table tr > :nth-child(1) { width: var(--table-col-1); }
+.request-field-details__content table tr > :nth-child(2) { width: var(--table-col-2); }
+.request-field-details__content table tr > :nth-child(3) { width: var(--table-col-3); }
+.request-field-details__content table tr > :nth-child(4) { width: var(--table-col-4); }
+.request-field-details__content table tr > :nth-child(5) {
+  width: var(--table-col-5, 10%);
+}
+
+.request-field-details__content table tr > :last-child {
+  text-align: center;
+  white-space: nowrap;
 }
 
 .markdown-section table tr:last-child td {
@@ -509,9 +557,13 @@ html, body {
   box-shadow: none;
 }
 
+.parameter-details__content,
 .response-field-details__content,
 .request-field-details__content {
   padding: 14px 0 2px;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
 }
 
 .response-field-details__content table,
@@ -698,6 +750,7 @@ html, body {
 }
 
 #response-status-200:checked ~ .response-status-tablist label[for="response-status-200"],
+#response-status-401:checked ~ .response-status-tablist label[for="response-status-401"],
 #response-status-400:checked ~ .response-status-tablist label[for="response-status-400"],
 #response-status-429:checked ~ .response-status-tablist label[for="response-status-429"] {
   border-bottom-color: #ec4899;
@@ -710,12 +763,14 @@ html, body {
 }
 
 #response-status-200:checked ~ .response-status-panels .response-status-panel-200,
+#response-status-401:checked ~ .response-status-panels .response-status-panel-401,
 #response-status-400:checked ~ .response-status-panels .response-status-panel-400,
 #response-status-429:checked ~ .response-status-panels .response-status-panel-429 {
   display: block;
 }
 
 [id$="-response-status-200"]:checked ~ .response-status-tablist label[for$="-response-status-200"],
+[id$="-response-status-401"]:checked ~ .response-status-tablist label[for$="-response-status-401"],
 [id$="-response-status-400"]:checked ~ .response-status-tablist label[for$="-response-status-400"],
 [id$="-response-status-429"]:checked ~ .response-status-tablist label[for$="-response-status-429"] {
   border-bottom-color: #ec4899;
@@ -723,6 +778,7 @@ html, body {
 }
 
 [id$="-response-status-200"]:checked ~ .response-status-panels .response-status-panel-200,
+[id$="-response-status-401"]:checked ~ .response-status-panels .response-status-panel-401,
 [id$="-response-status-400"]:checked ~ .response-status-panels .response-status-panel-400,
 [id$="-response-status-429"]:checked ~ .response-status-panels .response-status-panel-429 {
   display: block;
@@ -758,9 +814,35 @@ html, body {
   .book-body { left: 0; }
   .book-header h1 { padding-left: 64px; }
   .markdown-section h1 { font-size: 27px; }
+  .markdown-section table {
+    margin-top: 14px;
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .markdown-section table th,
+  .markdown-section table td {
+    padding: 9px 10px;
+  }
+  /* Let dense API tables grow with the viewport and scroll inside the details
+   * panel. A wider table keeps descriptions short, so rows stay compact. */
+  .markdown-section table:has(> thead > tr > :nth-child(3)) {
+    min-width: max(100%, 140vw);
+  }
+  .markdown-section table:has(> thead > tr > :nth-child(4)) {
+    min-width: max(100%, 180vw);
+  }
   .endpoint-card { align-items: flex-start; flex-wrap: wrap; gap: 8px; }
   .api-endpoint { align-items: flex-start; flex-wrap: wrap; gap: 8px; }
   .debug-button { margin-left: 0; }
+}
+
+@media (min-width: 601px) and (max-width: 1100px) {
+  /* The side navigation leaves less room for the document body at tablet and
+   * small-laptop widths. Let dense tables grow with the viewport so cells do
+   * not become unnecessarily tall, while keeping the overflow local. */
+  .markdown-section table:has(> thead > tr > :nth-child(4)) {
+    min-width: max(100%, 90vw);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

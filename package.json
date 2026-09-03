@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "docs:serve": "honkit serve",
-    "dev": "honkit serve",
+    "docs:serve": "honkit serve --lrport 46001",
+    "dev": "honkit serve --lrport 46001",
     "docs:build": "honkit build"
   },
   "dependencies": {
