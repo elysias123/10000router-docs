@@ -1,13 +1,25 @@
 # Gemini 文本聊天
 
-代理 Gemini API 请求。路径格式为 `/v1beta/models/{model_name}:{action}`；普通请求使用 `:generateContent`，流式请求使用 `:streamGenerateContent?alt=sse`。
-
 <div class="api-endpoint" role="group" aria-label="API endpoint">
   <span class="api-endpoint__method">POST</span>
   <code class="api-endpoint__path">/v1beta/models/{model}:generateContent</code>
 </div>
 
+代理 Gemini API 请求。普通请求使用 `/v1beta/models/{model_name}:generateContent`，流式请求使用 `/v1beta/models/{model_name}:streamGenerateContent?alt=sse`。
+
 ## 请求参数
+
+### 路径参数
+
+<details class="request-field-details" open>
+<summary>模型路径参数</summary>
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>字段</th><th>类型</th><th>说明</th><th>是否必填</th></tr></thead>
+  <tbody><tr><td><code>model</code></td><td>string</td><td>模型名称，位于 <code>/v1beta/models/{model}</code> 路径中。</td><td>是</td></tr></tbody>
+</table>
+</div>
+</details>
 
 ### 请求头
 
@@ -34,36 +46,36 @@
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+  <thead><tr><th>字段</th><th>类型</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>contents</code></td><td>array</td><td>否*</td><td>按时间顺序排列的消息。每项包含 <code>role</code>（<code>user</code> 或 <code>model</code>）和 <code>parts</code>。</td></tr>
-    <tr><td><code>generationConfig</code></td><td>object</td><td>否</td><td>生成控制参数，如温度、Top-P 和最大输出 token 数。</td></tr>
-    <tr><td><code>safetySettings</code></td><td>array</td><td>否</td><td>按安全类别覆盖默认安全阈值。</td></tr>
-    <tr><td><code>tools</code></td><td>array</td><td>否</td><td>声明模型可调用的工具；可用形式由模型决定。</td></tr>
-    <tr><td><code>systemInstruction</code></td><td>object</td><td>否</td><td>系统级指令，通常包含 <code>parts</code> 数组。</td></tr>
+    <tr><td><code>contents</code></td><td>array</td><td>按时间顺序排列的消息。每项包含 <code>role</code>（<code>user</code> 或 <code>model</code>）和 <code>parts</code>。</td><td>否</td></tr>
+    <tr><td><code>generationConfig</code></td><td>object</td><td>生成控制参数，如温度、Top-P 和最大输出 token 数。</td><td>否</td></tr>
+    <tr><td><code>safetySettings</code></td><td>array</td><td>按安全类别覆盖默认安全阈值。</td><td>否</td></tr>
+    <tr><td><code>tools</code></td><td>array</td><td>声明模型可调用的工具；可用形式由模型决定。</td><td>否</td></tr>
+    <tr><td><code>systemInstruction</code></td><td>object</td><td>系统级指令，通常包含 <code>parts</code> 数组。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>
 </details>
 
-<p>* 网关会把空请求转发给上游，但实际模型通常要求至少一条 <code>contents</code> 消息。</p>
+<p>网关会把空请求转发给上游，但实际模型通常要求至少一条 <code>contents</code> 消息。</p>
 
 <details class="request-field-details" open>
 <summary><code>contents[]</code> 与生成参数</summary>
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead>
+  <thead><tr><th>字段</th><th>类型</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>contents[].role</code></td><td>string</td><td><code>user</code> 表示用户输入，<code>model</code> 表示历史模型输出。</td></tr>
-    <tr><td><code>contents[].parts</code></td><td>array</td><td>内容片段数组。文本片段使用 <code>{ "text": "..." }</code>；媒体片段请参阅[媒体识别](../media/README.md)。</td></tr>
-    <tr><td><code>generationConfig.temperature</code></td><td>number</td><td>采样温度，取值范围和默认值由模型决定。</td></tr>
-    <tr><td><code>generationConfig.topP</code></td><td>number</td><td>核采样阈值。</td></tr>
-    <tr><td><code>generationConfig.topK</code></td><td>integer</td><td>候选 token 数量。</td></tr>
-    <tr><td><code>generationConfig.maxOutputTokens</code></td><td>integer</td><td>限制本次响应最多生成的 token 数。</td></tr>
-    <tr><td><code>generationConfig.stopSequences</code></td><td>array&lt;string&gt;</td><td>命中任一序列后停止生成。</td></tr>
-    <tr><td><code>safetySettings[].category</code></td><td>string</td><td>安全类别，例如 <code>HARM_CATEGORY_HARASSMENT</code>。</td></tr>
-    <tr><td><code>safetySettings[].threshold</code></td><td>string</td><td>该类别的拦截阈值，例如 <code>BLOCK_MEDIUM_AND_ABOVE</code>。</td></tr>
+    <tr><td><code>contents[].role</code></td><td>string</td><td><code>user</code> 表示用户输入，<code>model</code> 表示历史模型输出。</td><td>否</td></tr>
+    <tr><td><code>contents[].parts</code></td><td>array</td><td>内容片段数组。文本片段使用 <code>{ "text": "..." }</code>；媒体片段请参阅[媒体识别](../media/README.md)。</td><td>条件</td></tr>
+    <tr><td><code>generationConfig.temperature</code></td><td>number</td><td>采样温度，取值范围和默认值由模型决定。</td><td>否</td></tr>
+    <tr><td><code>generationConfig.topP</code></td><td>number</td><td>核采样阈值。</td><td>否</td></tr>
+    <tr><td><code>generationConfig.topK</code></td><td>integer</td><td>候选 token 数量。</td><td>否</td></tr>
+    <tr><td><code>generationConfig.maxOutputTokens</code></td><td>integer</td><td>限制本次响应最多生成的 token 数。</td><td>否</td></tr>
+    <tr><td><code>generationConfig.stopSequences</code></td><td>array&lt;string&gt;</td><td>命中任一序列后停止生成。</td><td>否</td></tr>
+    <tr><td><code>safetySettings[].category</code></td><td>string</td><td>安全类别，例如 <code>HARM_CATEGORY_HARASSMENT</code>。</td><td>条件</td></tr>
+    <tr><td><code>safetySettings[].threshold</code></td><td>string</td><td>该类别的拦截阈值，例如 <code>BLOCK_MEDIUM_AND_ABOVE</code>。</td><td>条件</td></tr>
   </tbody>
 </table>
 </div>
@@ -206,10 +218,10 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre></div
   <code class="api-endpoint__path">/v1beta/models/{model}:streamGenerateContent?alt=sse</code>
 </div>
 
+流式请求返回 `text/event-stream`。每个 `data` 事件包含一个 Gemini 响应片段；客户端应按顺序拼接 `candidates[].content.parts[].text`，直到收到 `finishReason`。与 OpenAI SSE 不同，Gemini 流通常不发送 `[DONE]` 标记。
+
 ```text
 data: {"candidates":[{"content":{"role":"model","parts":[{"text":"新加坡"}]},"finishReason":""}]}
 
 data: {"candidates":[{"content":{"parts":[{"text":"是一个城市国家。"}]},"finishReason":"STOP"}]}
 ```
-
-每个 SSE 事件都是一个 Gemini 响应片段；客户端应按顺序拼接 `candidates[].content.parts[].text`，直到收到 `finishReason`。与 OpenAI SSE 不同，Gemini 流通常不发送 `[DONE]` 标记。

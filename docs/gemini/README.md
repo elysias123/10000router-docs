@@ -1,6 +1,6 @@
 # Gemini API
 
-10000Router 通过 Gemini 原生协议代理 Google Gemini 模型。请求使用 Gemini 的 `v1beta` 路径和 JSON 数据结构，认证方式与其他接口一致。
+10000Router 支持 Gemini 原生格式及 10000Router 的特有接口。具体参数、响应和兼容性说明请参阅对应端点页面。
 
 ## 接口目录
 
@@ -8,5 +8,4 @@
 - [音频](audio/README.md)
 - [嵌入](embeddings/README.md)
 - [图像](images/README.md)
-- [内容安全与审查](moderations/README.md)
 - [模型](../models/README.md)

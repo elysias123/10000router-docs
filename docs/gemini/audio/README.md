@@ -5,7 +5,21 @@
   <code class="api-endpoint__path">/v1beta/models/{model}:generateContent</code>
 </div>
 
+Gemini 音频生成接口。可使用 `gemini-2.5-flash-preview-tts` 等模型。
+
 ## 请求参数
+
+### 路径参数
+
+<details class="request-field-details" open>
+<summary>模型路径参数</summary>
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>字段</th><th>类型</th><th>说明</th><th>是否必填</th></tr></thead>
+  <tbody><tr><td><code>model</code></td><td>string</td><td>模型名称，位于 <code>/v1beta/models/{model}</code> 路径中。</td><td>是</td></tr></tbody>
+</table>
+</div>
+</details>
 
 ### 请求头
 
@@ -24,18 +38,12 @@
 ### 请求体
 
 <details class="request-field-details" open>
-<summary>必填字段</summary>
-<div class="request-field-details__content"><table><thead><tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr></thead><tbody>
-<tr><td><code>contents</code></td><td>array</td><td>是</td><td>包含待合成文本的内容数组；文本放在 <code>contents[].parts[].text</code>。</td></tr>
-<tr><td><code>generationConfig</code></td><td>object</td><td>是</td><td>必须包含 <code>responseModalities</code> 和 <code>speechConfig</code>。</td></tr>
-</tbody></table></div>
-</details>
-
-<details class="request-field-details" open>
-<summary><code>generationConfig</code> 字段</summary>
-<div class="request-field-details__content"><table><thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead><tbody>
-<tr><td><code>responseModalities</code></td><td>array&lt;string&gt;</td><td>输出模态，TTS 请求设置为 <code>["AUDIO"]</code>。</td></tr>
-<tr><td><code>speechConfig.voiceConfig.prebuiltVoiceConfig.voiceName</code></td><td>string</td><td>预置声音名称，必须是上游模型支持的声音。</td></tr>
+<summary>请求字段</summary>
+<div class="request-field-details__content"><table><thead><tr><th>字段</th><th>类型</th><th>说明</th><th>是否必填</th></tr></thead><tbody>
+<tr><td><code>contents</code></td><td>array</td><td>包含待合成文本的内容数组；文本放在 <code>contents[].parts[].text</code>。</td><td>是</td></tr>
+<tr><td><code>generationConfig</code></td><td>object</td><td>必须包含 <code>responseModalities</code> 和 <code>speechConfig</code>。</td><td>是</td></tr>
+<tr><td><code>responseModalities</code></td><td>array&lt;string&gt;</td><td>输出模态，TTS 请求设置为 <code>["AUDIO"]</code>。</td><td>是</td></tr>
+<tr><td><code>speechConfig.voiceConfig.prebuiltVoiceConfig.voiceName</code></td><td>string</td><td>预置声音名称，必须是上游模型支持的声音。</td><td>是</td></tr>
 </tbody></table></div>
 </details>
 
@@ -66,22 +74,68 @@
   -H "Authorization: Bearer $GEMINI_API_KEY" \
   -H "Content-Type: application/json" \
   -d @tts-request.json</code></pre></div>
-    <div class="request-example-panel request-example-panel-javascript"><pre><code class="language-javascript">const payload = { contents: [{ parts: [{ text: "欢迎使用 10000Router。" }] }], generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } } } };
-const response = await fetch("https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent", { method: "POST", headers: { Authorization: "Bearer " + process.env.GEMINI_API_KEY, "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    <div class="request-example-panel request-example-panel-javascript"><pre><code class="language-javascript">const payload = {
+  contents: [{ parts: [{ text: "欢迎使用 10000Router。" }] }],
+  generationConfig: {
+    responseModalities: ["AUDIO"],
+    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
+  }
+};
+const response = await fetch("https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent", {
+  method: "POST",
+  headers: { Authorization: "Bearer " + process.env.GEMINI_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+});
 console.log((await response.json()).candidates?.[0]?.content?.parts);</code></pre></div>
-    <div class="request-example-panel request-example-panel-go"><pre><code class="language-go">payload := `{"contents":[{"parts":[{"text":"欢迎使用 10000Router。"}]}],"generationConfig":{"responseModalities":["AUDIO"],"speechConfig":{"voiceConfig":{"prebuiltVoiceConfig":{"voiceName":"Kore"}}}}}`
-req, _ := http.NewRequest("POST", "https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent", strings.NewReader(payload)); req.Header.Set("Authorization", "Bearer "+os.Getenv("GEMINI_API_KEY")); req.Header.Set("Content-Type", "application/json")
-res, err := http.DefaultClient.Do(req); if err != nil { log.Fatal(err) }; defer res.Body.Close()</code></pre></div>
-    <div class="request-example-panel request-example-panel-python"><pre><code class="language-python">import os, requests
-payload = {"contents": [{"parts": [{"text": "欢迎使用 10000Router。"}]}], "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Kore"}}}}}
-response = requests.post("https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent", headers={"Authorization": "Bearer " + os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"}, json=payload)
+    <div class="request-example-panel request-example-panel-go"><pre><code class="language-go">payload := `{
+  "contents": [{"parts": [{"text": "欢迎使用 10000Router。"}]}],
+  "generationConfig": {
+    "responseModalities": ["AUDIO"],
+    "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Kore"}}}
+  }
+}`
+req, _ := http.NewRequest("POST", "https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent", strings.NewReader(payload))
+req.Header.Set("Authorization", "Bearer "+os.Getenv("GEMINI_API_KEY"))
+req.Header.Set("Content-Type", "application/json")
+res, err := http.DefaultClient.Do(req)
+if err != nil { log.Fatal(err) }
+defer res.Body.Close()</code></pre></div>
+    <div class="request-example-panel request-example-panel-python"><pre><code class="language-python">import os
+import requests
+
+payload = {
+    "contents": [{"parts": [{"text": "欢迎使用 10000Router。"}]}],
+    "generationConfig": {
+        "responseModalities": ["AUDIO"],
+        "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Kore"}}},
+    },
+}
+response = requests.post(
+    "https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent",
+    headers={"Authorization": "Bearer " + os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"},
+    json=payload,
+)
 print(response.json())</code></pre></div>
-    <div class="request-example-panel request-example-panel-java"><pre><code class="language-java">var payload = "{\"contents\":[{\"parts\":[{\"text\":\"欢迎使用 10000Router。\"}]}],\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],\"speechConfig\":{\"voiceConfig\":{\"prebuiltVoiceConfig\":{\"voiceName\":\"Kore\"}}}}}";
-var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent")).header("Authorization", "Bearer " + System.getenv("GEMINI_API_KEY")).header("Content-Type", "application/json").POST(java.net.http.HttpRequest.BodyPublishers.ofString(payload)).build();
+    <div class="request-example-panel request-example-panel-java"><pre><code class="language-java">var payload = "{"
+    + "\"contents\":[{\"parts\":[{\"text\":\"欢迎使用 10000Router。\"}]}],"
+    + "\"generationConfig\":{\"responseModalities\":[\"AUDIO\"],"
+    + "\"speechConfig\":{\"voiceConfig\":{\"prebuiltVoiceConfig\":{\"voiceName\":\"Kore\"}}}}}";
+var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent"))
+    .header("Authorization", "Bearer " + System.getenv("GEMINI_API_KEY"))
+    .header("Content-Type", "application/json")
+    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(payload))
+    .build();
 var response = java.net.http.HttpClient.newHttpClient().send(request, java.net.http.HttpResponse.BodyHandlers.ofString());</code></pre></div>
     <div class="request-example-panel request-example-panel-csharp"><pre><code class="language-csharp">using System.Net.Http.Json;
-using var client = new HttpClient(); client.DefaultRequestHeaders.Authorization = new("Bearer", Environment.GetEnvironmentVariable("GEMINI_API_KEY"));
-var payload = new { contents = new[] { new { parts = new[] { new { text = "欢迎使用 10000Router。" } } } }, generationConfig = new { responseModalities = new[] { "AUDIO" }, speechConfig = new { voiceConfig = new { prebuiltVoiceConfig = new { voiceName = "Kore" } } } } };
+using var client = new HttpClient();
+client.DefaultRequestHeaders.Authorization = new("Bearer", Environment.GetEnvironmentVariable("GEMINI_API_KEY"));
+var payload = new {
+    contents = new[] { new { parts = new[] { new { text = "欢迎使用 10000Router。" } } } },
+    generationConfig = new {
+        responseModalities = new[] { "AUDIO" },
+        speechConfig = new { voiceConfig = new { prebuiltVoiceConfig = new { voiceName = "Kore" } } }
+    }
+};
 var response = await client.PostAsJsonAsync("https://10000router.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent", payload);
 Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre></div>
   </div>
@@ -125,4 +179,36 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre></div
 
 ### 错误响应
 
-模型不支持 TTS、声音名称无效或请求缺少必填配置时返回 `400`；渠道限流时返回 `429`。错误对象通常包含 `error.message`、`error.status` 和 `error.code`。
+<div class="response-status-tabs" role="group" aria-label="按 HTTP 状态码查看 Gemini 音频响应">
+  <input class="response-status-input" type="radio" name="gemini-audio-response-status" id="gemini-audio-response-status-200" checked>
+  <input class="response-status-input" type="radio" name="gemini-audio-response-status" id="gemini-audio-response-status-400">
+  <input class="response-status-input" type="radio" name="gemini-audio-response-status" id="gemini-audio-response-status-429">
+  <div class="response-status-tablist" aria-label="选择 HTTP 状态码查看响应示例">
+    <label for="gemini-audio-response-status-200">200 成功</label>
+    <label for="gemini-audio-response-status-400">400 请求错误</label>
+    <label for="gemini-audio-response-status-429">429 请求频率限制</label>
+  </div>
+  <div class="response-status-panels">
+    <div class="response-status-panel response-status-panel-200">
+      <p>成功响应请参阅上方的音频响应示例。</p>
+    </div>
+    <div class="response-status-panel response-status-panel-400">
+      <pre><code class="language-json">{
+  "error": {
+    "code": 400,
+    "message": "Invalid audio generation configuration",
+    "status": "INVALID_ARGUMENT"
+  }
+}</code></pre>
+    </div>
+    <div class="response-status-panel response-status-panel-429">
+      <pre><code class="language-json">{
+  "error": {
+    "code": 429,
+    "message": "Rate limit exceeded",
+    "status": "RESOURCE_EXHAUSTED"
+  }
+}</code></pre>
+    </div>
+  </div>
+</div>

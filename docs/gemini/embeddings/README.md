@@ -1,11 +1,11 @@
 # Gemini 嵌入
 
-当前仓库的 OpenAPI 定义未提供单独的 Gemini `v1beta` 嵌入端点。Gemini 嵌入模型通过与 OpenAI 兼容的 `/v1/embeddings` 接口调用；请参阅 [OpenAI 嵌入文档](../../openai/embeddings/README.md)。下面列出网关复用的请求和响应字段，便于在 Gemini 模型上使用。
-
 <div class="api-endpoint" role="group" aria-label="API endpoint">
   <span class="api-endpoint__method">POST</span>
   <code class="api-endpoint__path">/v1/embeddings</code>
 </div>
+
+将文本转换为向量嵌入。
 
 ## 请求参数
 
@@ -34,12 +34,12 @@
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+  <thead><tr><th>字段</th><th>类型</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>model</code></td><td>string</td><td>是</td><td>嵌入模型 ID；请确认该模型在当前账号和渠道可用。</td></tr>
-    <tr><td><code>input</code></td><td>string / array&lt;string&gt;</td><td>是</td><td>要转换为向量的单段文本或文本数组。</td></tr>
-    <tr><td><code>encoding_format</code></td><td>string</td><td>否</td><td><code>float</code>（默认）返回数字数组；<code>base64</code> 返回 Base64 编码。</td></tr>
-    <tr><td><code>dimensions</code></td><td>integer</td><td>否</td><td>请求输出向量维度；仅在模型支持时生效。</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>嵌入模型 ID；请确认该模型在当前账号和渠道可用。</td><td>是</td></tr>
+    <tr><td><code>input</code></td><td>string / array&lt;string&gt;</td><td>要转换为向量的单段文本或文本数组。</td><td>是</td></tr>
+    <tr><td><code>encoding_format</code></td><td>string</td><td><code>float</code>（默认）返回数字数组；<code>base64</code> 返回 Base64 编码。</td><td>否</td></tr>
+    <tr><td><code>dimensions</code></td><td>integer</td><td>请求输出向量维度；仅在模型支持时生效。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>
@@ -47,13 +47,18 @@
 
 ### 请求体示例
 
-```json
+<details class="request-field-details request-example-details" open>
+<summary>查看 JSON 请求体示例</summary>
+<div class="request-field-details__content">
+<pre><code class="language-json">
 {
   "model": "gemini-embedding-001",
-  "input": ["Gemini 支持文本嵌入。", "第二段文本"],
+  "input": "Gemini 支持文本嵌入。",
   "encoding_format": "float"
 }
-```
+</code></pre>
+</div>
+</details>
 
 ### 请求示例代码
 
@@ -70,21 +75,48 @@
   -H "Authorization: Bearer $GEMINI_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"model":"gemini-embedding-001","input":"Gemini 支持文本嵌入。"}'</code></pre></div>
-    <div class="request-example-panel request-example-panel-javascript"><pre><code class="language-javascript">const payload = { model: "gemini-embedding-001", input: "Gemini 支持文本嵌入。" };
-const response = await fetch("https://10000router.com/v1/embeddings", { method: "POST", headers: { Authorization: "Bearer " + process.env.GEMINI_API_KEY, "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    <div class="request-example-panel request-example-panel-javascript"><pre><code class="language-javascript">const payload = {
+  model: "gemini-embedding-001",
+  input: "Gemini 支持文本嵌入。"
+};
+const response = await fetch("https://10000router.com/v1/embeddings", {
+  method: "POST",
+  headers: { Authorization: "Bearer " + process.env.GEMINI_API_KEY, "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+});
 console.log(await response.json());</code></pre></div>
     <div class="request-example-panel request-example-panel-go"><pre><code class="language-go">payload := `{"model":"gemini-embedding-001","input":"Gemini 支持文本嵌入。"}`
-req, _ := http.NewRequest("POST", "https://10000router.com/v1/embeddings", strings.NewReader(payload)); req.Header.Set("Authorization", "Bearer "+os.Getenv("GEMINI_API_KEY")); req.Header.Set("Content-Type", "application/json")
-res, err := http.DefaultClient.Do(req); if err != nil { log.Fatal(err) }; defer res.Body.Close()</code></pre></div>
-    <div class="request-example-panel request-example-panel-python"><pre><code class="language-python">import os, requests
-response = requests.post("https://10000router.com/v1/embeddings", headers={"Authorization": "Bearer " + os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"}, json={"model": "gemini-embedding-001", "input": "Gemini 支持文本嵌入。"})
+req, _ := http.NewRequest("POST", "https://10000router.com/v1/embeddings", strings.NewReader(payload))
+req.Header.Set("Authorization", "Bearer "+os.Getenv("GEMINI_API_KEY"))
+req.Header.Set("Content-Type", "application/json")
+res, err := http.DefaultClient.Do(req)
+if err != nil { log.Fatal(err) }
+defer res.Body.Close()</code></pre></div>
+    <div class="request-example-panel request-example-panel-python"><pre><code class="language-python">import os
+import requests
+
+payload = {
+    "model": "gemini-embedding-001",
+    "input": "Gemini 支持文本嵌入。",
+}
+response = requests.post(
+    "https://10000router.com/v1/embeddings",
+    headers={"Authorization": "Bearer " + os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"},
+    json=payload,
+)
 print(response.json())</code></pre></div>
     <div class="request-example-panel request-example-panel-java"><pre><code class="language-java">var payload = "{\"model\":\"gemini-embedding-001\",\"input\":\"Gemini 支持文本嵌入。\"}";
-var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://10000router.com/v1/embeddings")).header("Authorization", "Bearer " + System.getenv("GEMINI_API_KEY")).header("Content-Type", "application/json").POST(java.net.http.HttpRequest.BodyPublishers.ofString(payload)).build();
+var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://10000router.com/v1/embeddings"))
+    .header("Authorization", "Bearer " + System.getenv("GEMINI_API_KEY"))
+    .header("Content-Type", "application/json")
+    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(payload))
+    .build();
 var response = java.net.http.HttpClient.newHttpClient().send(request, java.net.http.HttpResponse.BodyHandlers.ofString());</code></pre></div>
     <div class="request-example-panel request-example-panel-csharp"><pre><code class="language-csharp">using System.Net.Http.Json;
-using var client = new HttpClient(); client.DefaultRequestHeaders.Authorization = new("Bearer", Environment.GetEnvironmentVariable("GEMINI_API_KEY"));
-var response = await client.PostAsJsonAsync("https://10000router.com/v1/embeddings", new { model = "gemini-embedding-001", input = "Gemini 支持文本嵌入。" });
+using var client = new HttpClient();
+client.DefaultRequestHeaders.Authorization = new("Bearer", Environment.GetEnvironmentVariable("GEMINI_API_KEY"));
+var payload = new { model = "gemini-embedding-001", input = "Gemini 支持文本嵌入。" };
+var response = await client.PostAsJsonAsync("https://10000router.com/v1/embeddings", payload);
 Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre></div>
   </div>
 </div>
