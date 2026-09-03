@@ -2,10 +2,10 @@
 
 <div class="api-endpoint" role="group" aria-label="API endpoint">
   <span class="api-endpoint__method">POST</span>
-  <code class="api-endpoint__path">/v1/images/edits</code>
+  <code class="api-endpoint__path">/v1/images/edits/</code>
 </div>
 
-根据原始图像和提示词创建编辑或扩展图像。NewAPI 原生 OpenAI 格式使用 `multipart/form-data` 上传文件；具体模型和渠道支持的字段可能不同。
+根据原始图像和提示词创建编辑或扩展图像。原生 OpenAI 格式使用 `multipart/form-data` 上传文件；具体模型和渠道支持的字段可能不同。
 
 ## 请求参数
 
@@ -20,60 +20,50 @@
 </div>
 </details>
 
-请求体使用 <code>multipart/form-data</code>。NewAPI 会转发未识别的表单字段，因此同一请求可以携带模型所需的兼容参数。
+请求体使用 <code>multipart/form-data</code>。网关会转发未识别的表单字段，因此同一请求可以携带模型所需的兼容参数。
 
 ### 表单字段
 
 <details class="request-field-details" open>
-<summary>必填字段（2 个）</summary>
+<summary>表单字段（8 个）</summary>
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+  <thead><tr><th>字段</th><th>类型</th><th>默认值</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>image</code></td><td>file</td><td>是</td><td>要编辑的原始图像。原生 OpenAI 图像编辑通常要求有效的 PNG、小于 4 MB 且为正方形；未提供 <code>mask</code> 时，图像通常需要包含透明区域。NewAPI 也支持使用 <code>image[]</code> 传入多张图像（是否可用取决于上游）。</td></tr>
-    <tr><td><code>prompt</code></td><td>string</td><td>是</td><td>所需编辑结果的文本描述。DALL·E 2 的原生 OpenAI 接口通常限制为 1000 个字符。</td></tr>
+    <tr><td><code>image</code></td><td>file</td><td>—</td><td>要编辑的图像。必须是有效的 PNG、小于 4 MB 且为正方形；未提供遮罩时，图像必须具有透明区域。</td><td>是</td></tr>
+    <tr><td><code>mask</code></td><td>file</td><td>—</td><td>遮罩图像。完全透明区域表示要编辑的位置；必须与原始图像尺寸相同。</td><td>否</td></tr>
+    <tr><td><code>prompt</code></td><td>string</td><td>—</td><td>所需编辑结果的文本描述，最大长度为 1000 个字符。</td><td>是</td></tr>
+    <tr><td><code>n</code></td><td>string</td><td>未声明</td><td>要生成的图像数量，必须介于 <code>1</code> 和 <code>10</code> 之间。</td><td>否</td></tr>
+    <tr><td><code>size</code></td><td>string</td><td>未声明</td><td>生成图像的尺寸，具体取值由模型决定。</td><td>否</td></tr>
+    <tr><td><code>response_format</code></td><td>string</td><td>未声明</td><td>生成图像的返回格式，必须为 <code>url</code> 或 <code>b64_json</code>。</td><td>否</td></tr>
+    <tr><td><code>user</code></td><td>string</td><td>未声明</td><td>最终用户的唯一标识符。</td><td>否</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>未声明</td><td>图像模型 ID，例如 <code>dall-e-2</code>；实际可用模型由网关和上游渠道决定。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>
 </details>
-
-<details class="request-field-details" open>
-<summary>可选字段（6 个）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>字段</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>mask</code></td><td>file</td><td>无</td><td>遮罩图像。透明区域（例如 alpha 为 0）表示要编辑的位置；必须与原始图像尺寸相同，通常也要求 PNG 且小于 4 MB。</td></tr>
-    <tr><td><code>model</code></td><td>string</td><td>由网关决定</td><td>图像模型 ID，例如 <code>dall-e-2</code> 或上游支持的编辑模型。</td></tr>
-    <tr><td><code>n</code></td><td>integer</td><td>1</td><td>生成图像数量。原生 OpenAI 文档通常要求 1–10；NewAPI 最终仍受上游模型限制。</td></tr>
-    <tr><td><code>size</code></td><td>string</td><td>模型默认值</td><td>输出图像大小。DALL·E 2 常用 <code>256x256</code>、<code>512x512</code> 或 <code>1024x1024</code>。</td></tr>
-    <tr><td><code>response_format</code></td><td>string</td><td><code>url</code></td><td>返回格式，可选 <code>url</code> 或 <code>b64_json</code>；仅在上游渠道支持时生效。</td></tr>
-    <tr><td><code>user</code></td><td>string</td><td>无</td><td>最终用户的唯一标识符，用于滥用监控和审计。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
-
-### JSON 图像输入（10000Router/渠道扩展）
-
-部分 NewAPI 渠道允许使用 <code>application/json</code> 传入 <code>image</code> 或 <code>images</code> 字段（值可以是图像 URL 或 data URL），并可附带 <code>input_fidelity</code>、<code>background</code>、<code>quality</code>、<code>output_format</code>、<code>output_compression</code>、<code>partial_images</code>、<code>stream</code> 等模型参数。这些字段不是标准 OpenAI 编辑接口的通用参数，必须以实际模型/渠道的支持列表为准。原生 OpenAI 编辑接口的标准文档格式仍是 multipart；如果渠道不接受 JSON，将返回 <code>400</code>。
 
 ### 请求示例代码
 
 <div class="request-examples" role="group" aria-label="请求示例">
   <input class="request-example-input" type="radio" name="image-edit-example-language" id="image-edit-example-curl" checked>
   <input class="request-example-input" type="radio" name="image-edit-example-language" id="image-edit-example-javascript">
+  <input class="request-example-input" type="radio" name="image-edit-example-language" id="image-edit-example-go">
   <input class="request-example-input" type="radio" name="image-edit-example-language" id="image-edit-example-python">
+  <input class="request-example-input" type="radio" name="image-edit-example-language" id="image-edit-example-java">
+  <input class="request-example-input" type="radio" name="image-edit-example-language" id="image-edit-example-csharp">
   <div class="request-example-tabs" aria-label="选择编程语言">
     <label for="image-edit-example-curl">cURL</label>
     <label for="image-edit-example-javascript">JavaScript</label>
+    <label for="image-edit-example-go">Go</label>
     <label for="image-edit-example-python">Python</label>
+    <label for="image-edit-example-java">Java</label>
+    <label for="image-edit-example-csharp">C#</label>
   </div>
   <div class="request-example-panels">
     <div class="request-example-panel request-example-panel-curl">
-      <pre><code class="language-bash">curl -X POST "https://10000router.com/v1/images/edits" \
+      <pre><code class="language-bash">curl -X POST "https://10000router.com/v1/images/edits/" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -F "image=@input.png" \
   -F "mask=@mask.png" \
@@ -92,7 +82,7 @@ form.append("model", "dall-e-2");
 form.append("size", "1024x1024");
 form.append("response_format", "url");
 
-const response = await fetch("https://10000router.com/v1/images/edits", {
+const response = await fetch("https://10000router.com/v1/images/edits/", {
   method: "POST",
   headers: { Authorization: "Bearer " + process.env.OPENAI_API_KEY },
   body: form
@@ -105,7 +95,7 @@ import requests
 
 with open("input.png", "rb") as image_file, open("mask.png", "rb") as mask_file:
     response = requests.post(
-        "https://10000router.com/v1/images/edits",
+        "https://10000router.com/v1/images/edits/",
         headers={"Authorization": "Bearer " + os.environ["OPENAI_API_KEY"]},
         files={"image": image_file, "mask": mask_file},
         data={
@@ -117,6 +107,38 @@ with open("input.png", "rb") as image_file, open("mask.png", "rb") as mask_file:
     )
 response.raise_for_status()
 print(response.json())</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-go">
+      <pre><code class="language-go">file, _ := os.Open("input.png")
+defer file.Close()
+body := &bytes.Buffer{}
+writer := multipart.NewWriter(body)
+part, _ := writer.CreateFormFile("image", "input.png")
+io.Copy(part, file)
+writer.WriteField("prompt", "把背景改成蓝天")
+writer.WriteField("model", "dall-e-2")
+writer.WriteField("response_format", "url")
+writer.Close()
+req, _ := http.NewRequest("POST", "https://10000router.com/v1/images/edits/", body)
+req.Header.Set("Authorization", "Bearer "+os.Getenv("OPENAI_API_KEY"))
+req.Header.Set("Content-Type", writer.FormDataContentType())</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-java">
+      <pre><code class="language-java">var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://10000router.com/v1/images/edits/"))
+    .header("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY"))
+    .header("Content-Type", "multipart/form-data")
+    .POST(java.net.http.HttpRequest.BodyPublishers.ofFile(java.nio.file.Path.of("input.png"))).build();
+var response = java.net.http.HttpClient.newHttpClient().send(request, java.net.http.HttpResponse.BodyHandlers.ofString());</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-csharp">
+      <pre><code class="language-csharp">using var client = new HttpClient();
+client.DefaultRequestHeaders.Authorization = new("Bearer", Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+using var form = new MultipartFormDataContent();
+form.Add(new StreamContent(File.OpenRead("input.png")), "image", "input.png");
+form.Add(new StringContent("把背景改成蓝天"), "prompt");
+form.Add(new StringContent("dall-e-2"), "model");
+var response = await client.PostAsync("https://10000router.com/v1/images/edits/", form);
+Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
     </div>
   </div>
 </div>

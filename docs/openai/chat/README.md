@@ -5,5 +5,4 @@
 ## 接口目录
 
 - [Chat Completions](chat-completions.md)
-- [Responses](responses-text.md)
-- [Responses 图像输入](responses-images.md)
+- [Responses](responses.md)

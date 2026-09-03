@@ -5,7 +5,7 @@
   <code class="api-endpoint__path">/v1/audio/speech</code>
 </div>
 
-使用 OpenAI 兼容格式将文本转换为音频。请求需要 `Authorization: Bearer <API_KEY>` 和 `Content-Type: application/json`；参数是否可用取决于所选 TTS 模型和兼容网关。
+将文本转换为音频
 
 ## 请求参数
 
@@ -30,50 +30,21 @@
 ### 请求体
 
 <details class="request-field-details" open>
-<summary>必填参数（3 个）</summary>
+<summary>请求体参数（5 个）</summary>
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>model</code></td><td>string</td><td>是</td><td>TTS 模型 ID，例如 <code>tts-1</code>。</td></tr>
-    <tr><td><code>input</code></td><td>string</td><td>是</td><td>要合成的文本，最大长度为 4096 个字符。</td></tr>
-    <tr><td><code>voice</code></td><td>string</td><td>是</td><td>声音 ID：<code>alloy</code>、<code>echo</code>、<code>fable</code>、<code>onyx</code>、<code>nova</code> 或 <code>shimmer</code>。</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>—</td><td>TTS 模型 ID，例如 <code>tts-1</code>。</td><td>是</td></tr>
+    <tr><td><code>input</code></td><td>string</td><td>—</td><td>要合成的文本，最大长度为 4096 个字符。</td><td>是</td></tr>
+    <tr><td><code>voice</code></td><td>string</td><td>—</td><td>声音 ID：<code>alloy</code>、<code>echo</code>、<code>fable</code>、<code>onyx</code>、<code>nova</code> 或 <code>shimmer</code>。</td><td>是</td></tr>
+    <tr><td><code>response_format</code></td><td>string</td><td><code>mp3</code></td><td>音频格式：<code>mp3</code>、<code>opus</code>、<code>aac</code>、<code>flac</code>、<code>wav</code> 或 <code>pcm</code>。</td><td>否</td></tr>
+    <tr><td><code>speed</code></td><td>number</td><td>1</td><td>播放速度，范围 <code>0.25</code> 到 <code>4</code>。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>
 </details>
-
-<details class="request-field-details" open>
-<summary>可选参数（2 个）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>response_format</code></td><td>string</td><td><code>mp3</code></td><td>音频格式：<code>mp3</code>、<code>opus</code>、<code>aac</code>、<code>flac</code>、<code>wav</code> 或 <code>pcm</code>。</td></tr>
-    <tr><td><code>speed</code></td><td>number</td><td>1</td><td>播放速度，范围 <code>0.25</code> 到 <code>4</code>。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
-
-<details class="request-field-details" open>
-<summary>兼容扩展参数（依网关支持）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>instructions</code></td><td>string</td><td>对语气、风格或发音的额外指导。</td></tr>
-    <tr><td><code>stream_format</code>（网关扩展）</td><td>string</td><td>设置为 <code>sse</code> 时请求流式音频事件；仅在模型和网关支持时可用。</td></tr>
-    <tr><td><code>metadata</code></td><td>object</td><td>附加的键值元数据。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
-
-上述扩展字段不属于标准 OpenAI <code>/v1/audio/speech</code> 请求。只有明确支持它们的 10000Router 渠道才应发送；未支持的渠道可能返回 <code>400</code>。
 
 ### 请求体示例
 
@@ -96,11 +67,17 @@
 <div class="request-examples" role="group" aria-label="请求示例">
   <input class="request-example-input" type="radio" name="speech-example-language" id="speech-example-curl" checked>
   <input class="request-example-input" type="radio" name="speech-example-language" id="speech-example-javascript">
+  <input class="request-example-input" type="radio" name="speech-example-language" id="speech-example-go">
   <input class="request-example-input" type="radio" name="speech-example-language" id="speech-example-python">
+  <input class="request-example-input" type="radio" name="speech-example-language" id="speech-example-java">
+  <input class="request-example-input" type="radio" name="speech-example-language" id="speech-example-csharp">
   <div class="request-example-tabs" aria-label="选择编程语言">
     <label for="speech-example-curl">cURL</label>
     <label for="speech-example-javascript">JavaScript</label>
+    <label for="speech-example-go">Go</label>
     <label for="speech-example-python">Python</label>
+    <label for="speech-example-java">Java</label>
+    <label for="speech-example-csharp">C#</label>
   </div>
   <div class="request-example-panels">
     <div class="request-example-panel request-example-panel-curl">
@@ -136,6 +113,31 @@ response = requests.post(
 response.raise_for_status()
 with open("speech.mp3", "wb") as audio:
     audio.write(response.content)</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-go">
+      <pre><code class="language-go">payload := `{"model":"tts-1","input":"你好，这是一个语音示例。","voice":"alloy","response_format":"mp3","speed":1}`
+req, _ := http.NewRequest("POST", "https://10000router.com/v1/audio/speech", strings.NewReader(payload))
+req.Header.Set("Authorization", "Bearer "+os.Getenv("OPENAI_API_KEY"))
+req.Header.Set("Content-Type", "application/json")
+res, err := http.DefaultClient.Do(req)
+if err != nil { log.Fatal(err) }
+defer res.Body.Close()</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-java">
+      <pre><code class="language-java">var payload = "{\"model\":\"tts-1\",\"input\":\"你好，这是一个语音示例。\",\"voice\":\"alloy\",\"response_format\":\"mp3\",\"speed\":1}";
+var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://10000router.com/v1/audio/speech"))
+    .header("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY"))
+    .header("Content-Type", "application/json")
+    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(payload)).build();
+var response = java.net.http.HttpClient.newHttpClient().send(request, java.net.http.HttpResponse.BodyHandlers.ofByteArray());</code></pre>
+    </div>
+    <div class="request-example-panel request-example-panel-csharp">
+      <pre><code class="language-csharp">using System.Net.Http.Json;
+using var client = new HttpClient();
+client.DefaultRequestHeaders.Authorization = new("Bearer", Environment.GetEnvironmentVariable("OPENAI_API_KEY"));
+var payload = new { model = "tts-1", input = "你好，这是一个语音示例。", voice = "alloy", response_format = "mp3", speed = 1 };
+var response = await client.PostAsJsonAsync("https://10000router.com/v1/audio/speech", payload);
+await File.WriteAllBytesAsync("speech.mp3", await response.Content.ReadAsByteArrayAsync());</code></pre>
     </div>
   </div>
 </div>
@@ -194,7 +196,3 @@ with open("speech.mp3", "wb") as audio:
 </table>
 </div>
 </details>
-
-### 流式响应
-
-当请求设置 <code>stream_format: "sse"</code> 且模型/网关支持时，响应为 Server-Sent Events；否则返回完整音频二进制响应。流式事件的具体数据格式由兼容网关决定。

@@ -1,6 +1,6 @@
 # openai
 
-这里汇总 OpenAI 原生格式及 10000Router 的兼容接口。具体参数、响应和兼容性说明请参阅对应端点页面。
+10000Router 支持 OpenAI 原生格式及 10000Router 的特有接口。具体参数、响应和兼容性说明请参阅对应端点页面。
 
 ## 接口目录
 
@@ -10,4 +10,3 @@
 - [补全（Completions）](completions/README.md)
 - [嵌入（Embeddings）](embeddings/README.md)
 - [审查（Moderations）](moderations/README.md)
-- [模型](../models/README.md)

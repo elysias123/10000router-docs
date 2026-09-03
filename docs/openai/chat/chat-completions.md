@@ -1,10 +1,12 @@
 
-# Chat Completions API
+# ChatCompletions格式
 
 <div class="api-endpoint" role="group" aria-label="API endpoint">
   <span class="api-endpoint__method">POST</span>
   <code class="api-endpoint__path">/v1/chat/completions</code>
 </div>
+
+根据对话历史创建模型响应。支持流式和非流式响应，兼容 OpenAI Chat Completions API。
 
 ## 请求参数
 
@@ -22,7 +24,7 @@
 
 <details class="parameter-details" open>
 <summary>Content-Type</summary>
-<div class="parameter-details__content"><p>请求体为 JSON 时请同时发送 <code>Content-Type: application/json</code>。</p></div>
+<div class="parameter-details__content"><p>请求体为 JSON 时请同时发送 <code>Content-Type: application/json</code></p></div>
 </details>
 </div>
 
@@ -31,38 +33,70 @@
 ### 请求体
 
 <details class="request-field-details" open>
-<summary>必填参数（2 个）</summary>
+<summary>请求体参数（21 个）</summary>
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>model</code></td><td>string</td><td>是</td><td>要调用的模型 ID。</td></tr>
-    <tr><td><code>messages</code></td><td>array</td><td>是</td><td>对话消息数组，按时间顺序传入。每条消息至少包含 <code>role</code> 和 <code>content</code>；常见角色包括 <code>system</code>、<code>user</code>、<code>assistant</code> 和 <code>tool</code>。</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>—</td><td>要调用的模型 ID。</td><td>是</td></tr>
+    <tr><td><code>messages</code></td><td>array</td><td>—</td><td>对话消息数组，按时间顺序传入。每条消息至少包含 <code>role</code> 和 <code>content</code>；常见角色包括 <code>system</code>、<code>user</code>、<code>assistant</code> 和 <code>tool</code>。</td><td>是</td></tr>
+    <tr><td><code>temperature</code></td><td>number</td><td>1</td><td>采样温度，范围 <code>0</code> 到 <code>2</code>。是否支持取决于模型。</td><td>否</td></tr>
+    <tr><td><code>top_p</code></td><td>number</td><td>1</td><td>核采样参数，范围 <code>0</code> 到 <code>1</code>。一般只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td><td>否</td></tr>
+    <tr><td><code>max_completion_tokens</code></td><td>integer</td><td>模型上限</td><td>限制本次请求生成的最大 token 数。支持推理的模型可能会将推理 token 计入此上限。</td><td>否</td></tr>
+    <tr><td><code>max_tokens</code></td><td>integer</td><td>—</td><td>旧版长度限制字段，部分新模型不支持；新请求优先使用 <code>max_completion_tokens</code>。</td><td>否</td></tr>
+    <tr><td><code>stop</code></td><td>string / array</td><td>null</td><td>命中停止序列后结束生成。部分模型不支持此参数。</td><td>否</td></tr>
+    <tr><td><code>n</code></td><td>integer</td><td>1</td><td>为每个输入生成的候选数量，最小值为 <code>1</code>。大于 <code>1</code> 会按候选数量增加用量。</td><td>否</td></tr>
+    <tr><td><code>presence_penalty</code></td><td>number</td><td>0</td><td>根据已有内容惩罚重复主题，通常范围为 <code>-2</code> 到 <code>2</code>。</td><td>否</td></tr>
+    <tr><td><code>frequency_penalty</code></td><td>number</td><td>0</td><td>根据出现频率惩罚重复 token，通常范围为 <code>-2</code> 到 <code>2</code>。</td><td>否</td></tr>
+    <tr><td><code>logit_bias</code></td><td>object</td><td>null</td><td>以 token ID 为键、数值为值调整生成概率。</td><td>否</td></tr>
+    <tr><td><code>seed</code></td><td>integer</td><td>—</td><td>尽量复现结果的随机种子；只在支持的模型上生效，不能保证绝对一致。</td><td>否</td></tr>
+    <tr><td><code>response_format</code></td><td>object</td><td>—</td><td>设置输出格式。可使用 <code>{ "type": "text" }</code>、<code>{ "type": "json_object" }</code>，或使用 <code>json_schema</code> 约束 JSON 结构。</td><td>否</td></tr>
+    <tr><td><code>modalities</code></td><td>array</td><td><code>["text"]</code></td><td>指定输出模态，可选 <code>text</code> 或 <code>audio</code>。</td><td>否</td></tr>
+    <tr><td><code>audio</code></td><td>object</td><td>—</td><td>音频输出配置，包含 <code>voice</code> 和 <code>format</code>；仅适用于支持音频的模型。</td><td>否</td></tr>
+    <tr><td><code>reasoning_effort</code></td><td>string</td><td>—</td><td>推理强度，可选 <code>low</code>、<code>medium</code>、<code>high</code>；仅适用于支持推理的模型。</td><td>否</td></tr>
+    <tr><td><code>stream</code></td><td>boolean</td><td>false</td><td>设置为 <code>true</code> 时以 SSE 增量事件返回结果。</td><td>否</td></tr>
+    <tr><td><code>stream_options</code></td><td>object</td><td>—</td><td>流式选项，例如 <code>{ "include_usage": true }</code> 用于请求最终用量统计。仅在 <code>stream=true</code> 时使用。</td><td>否</td></tr>
+    <tr><td><code>tools</code></td><td>array</td><td>—</td><td>声明模型可以调用的工具，目前最常见的是 <code>function</code> 工具。</td><td>否</td></tr>
+    <tr><td><code>tool_choice</code></td><td>string / object</td><td>auto</td><td>控制工具调用策略：<code>none</code>、<code>auto</code>、<code>required</code>，或指定某个函数。</td><td>否</td></tr>
+    <tr><td><code>user</code></td><td>string</td><td>—</td><td>旧版终端用户标识字段；新项目请根据网关要求使用对应的安全标识字段。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>
 </details>
 
+其中只有 <code>model</code> 和 <code>messages</code> 为必填字段；其余参数均为可选，是否生效取决于所选模型和兼容网关。
+
 ### 消息字段
 
-`messages` 是按时间顺序排列的消息数组。NewAPI 会保留下列字段并按所选上游适配器进行转换；不同模型对多模态内容和推理字段的支持不同。
+`messages` 是按时间顺序排列的消息数组。网关会保留下列字段并按所选上游适配器进行转换；不同模型对多模态内容和推理字段的支持不同。
 
 <details class="request-field-details" open>
-<summary>消息对象字段（6 个）</summary>
+<summary>消息对象与内容块字段（16 个）</summary>
 
 <div class="request-field-details__content">
-<table>
-  <thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead>
+<table class="message-fields-table">
+  <thead><tr><th>字段</th><th>类型</th><th>取值</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>role</code></td><td>string</td><td>消息角色，通常为 <code>system</code>、<code>developer</code>、<code>user</code>、<code>assistant</code> 或 <code>tool</code>。</td></tr>
-    <tr><td><code>content</code></td><td>string / array</td><td>文本，或内容块数组。内容块可使用 <code>text</code>、<code>image_url</code>、<code>input_audio</code>、<code>file</code> 和 <code>video_url</code>。</td></tr>
-    <tr><td><code>name</code></td><td>string</td><td>可选的参与者名称。</td></tr>
-    <tr><td><code>reasoning_content</code></td><td>string</td><td>向兼容推理模型传递的推理内容；请勿在不需要时回传隐藏推理。</td></tr>
-    <tr><td><code>tool_calls</code></td><td>array</td><td>助手消息发起的工具调用。通常与 <code>role: "assistant"</code> 一起回传。</td></tr>
-    <tr><td><code>tool_call_id</code></td><td>string</td><td>工具消息对应的调用 ID，必须与助手消息中的工具调用匹配。</td></tr>
+    <tr><td><code>messages[].role</code></td><td>string</td><td><code>system</code>、<code>developer</code>、<code>user</code>、<code>assistant</code>、<code>tool</code></td><td>消息角色。</td><td>是</td></tr>
+    <tr><td><code>messages[].content</code></td><td>string / array</td><td>文本或内容块数组</td><td>文本，或由 <code>text</code>、<code>image_url</code>、<code>input_audio</code>、<code>file</code>、<code>video_url</code> 组成的内容块数组。助手消息仅包含工具调用时可以省略。</td><td>条件</td></tr>
+    <tr><td><code>messages[].name</code></td><td>string</td><td>—</td><td>可选的参与者名称。</td><td>否</td></tr>
+    <tr><td><code>messages[].reasoning_content</code></td><td>string</td><td>—</td><td>向兼容推理模型传递的推理内容；请勿在不需要时回传隐藏推理。</td><td>否</td></tr>
+    <tr><td><code>messages[].tool_calls</code></td><td>array</td><td>—</td><td>助手消息发起的工具调用。通常与 <code>role: "assistant"</code> 一起回传。</td><td>否</td></tr>
+    <tr><td><code>messages[].tool_call_id</code></td><td>string</td><td>—</td><td>工具消息对应的调用 ID，必须与助手消息中的工具调用匹配。</td><td>条件</td></tr>
+    <tr><td><code>messages[].content[].type</code></td><td>string</td><td><code>text</code>、<code>image_url</code>、<code>input_audio</code>、<code>file</code>、<code>video_url</code></td><td>内容块类型，用于确定当前内容块的字段结构。</td><td>是</td></tr>
+    <tr><td><code>messages[].content[].text</code></td><td>string</td><td>—</td><td>文本内容，仅用于 <code>type: "text"</code>。</td><td>条件</td></tr>
+    <tr><td><code>messages[].content[].image_url.url</code></td><td>string</td><td>—</td><td>图片 URL 或 base64 数据，仅用于 <code>type: "image_url"</code>。</td><td>条件</td></tr>
+    <tr><td><code>messages[].content[].image_url.detail</code></td><td>string</td><td><code>low</code> / <code>high</code> / <code>auto</code></td><td>图片细节级别，仅用于 <code>type: "image_url"</code>。</td><td>否</td></tr>
+    <tr><td><code>messages[].content[].input_audio.data</code></td><td>string</td><td>—</td><td>Base64 编码的音频数据，仅用于 <code>type: "input_audio"</code>。</td><td>条件</td></tr>
+    <tr><td><code>messages[].content[].input_audio.format</code></td><td>string</td><td><code>wav</code> / <code>mp3</code></td><td>音频格式，仅用于 <code>type: "input_audio"</code>。</td><td>条件</td></tr>
+    <tr><td><code>messages[].content[].file.filename</code></td><td>string</td><td>—</td><td>文件名，仅用于 <code>type: "file"</code>。</td><td>条件</td></tr>
+    <tr><td><code>messages[].content[].file.file_data</code></td><td>string</td><td>—</td><td>文件数据，仅用于 <code>type: "file"</code>；通常与 <code>file_id</code> 二选一。</td><td>条件</td></tr>
+    <tr><td><code>messages[].content[].file.file_id</code></td><td>string</td><td>—</td><td>已上传文件 ID，仅用于 <code>type: "file"</code>；通常与 <code>file_data</code> 二选一。</td><td>条件</td></tr>
+    <tr><td><code>messages[].content[].video_url.url</code></td><td>string</td><td>—</td><td>视频 URL，仅用于 <code>type: "video_url"</code>。</td><td>条件</td></tr>
   </tbody>
 </table>
+<p>“条件”表示仅在对应消息角色或内容块类型下必填；消息对象中的 <code>role</code> 和每个内容块中的 <code>type</code> 始终必填。</p>
 </div>
 </details>
 
@@ -78,61 +112,9 @@
 }
 ```
 
-内容块字段按 NewAPI OpenAPI 定义如下：
-
-| 类型 | 字段 | 类型/取值 | 说明 |
-| --- | --- | --- | --- |
-| `text` | `text` | string | 文本内容。 |
-| `image_url` | `image_url.url` | string | 图片 URL 或 base64 数据。 |
-| `image_url` | `image_url.detail` | `low` / `high` / `auto` | 图片细节级别。 |
-| `input_audio` | `input_audio.data` | string | Base64 编码的音频数据。 |
-| `input_audio` | `input_audio.format` | `wav` / `mp3` | 音频格式。 |
-| `file` | `file.filename` | string | 文件名。 |
-| `file` | `file.file_data` | string | 文件数据。 |
-| `file` | `file.file_id` | string | 已上传文件 ID。 |
-| `video_url` | `video_url.url` | string | 视频 URL。 |
-
-### 生成控制
-
-<details class="request-field-details" open>
-<summary>生成控制参数（10 个）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>temperature</code></td><td>number</td><td>1</td><td>采样温度，范围 <code>0</code> 到 <code>2</code>。是否支持取决于模型。</td></tr>
-    <tr><td><code>top_p</code></td><td>number</td><td>1</td><td>核采样参数，范围 <code>0</code> 到 <code>1</code>。一般只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td></tr>
-    <tr><td><code>max_completion_tokens</code></td><td>integer</td><td>模型上限</td><td>限制本次请求生成的最大 token 数。支持推理的模型可能会将推理 token 计入此上限。</td></tr>
-    <tr><td><code>max_tokens</code></td><td>integer</td><td>—</td><td>旧版长度限制字段，部分新模型不支持；新请求优先使用 <code>max_completion_tokens</code>。</td></tr>
-    <tr><td><code>stop</code></td><td>string / array</td><td>null</td><td>命中停止序列后结束生成。部分模型不支持此参数。</td></tr>
-    <tr><td><code>n</code></td><td>integer</td><td>1</td><td>为每个输入生成的候选数量，最小值为 <code>1</code>。大于 <code>1</code> 会按候选数量增加用量。</td></tr>
-    <tr><td><code>presence_penalty</code></td><td>number</td><td>0</td><td>根据已有内容惩罚重复主题，通常范围为 <code>-2</code> 到 <code>2</code>。</td></tr>
-    <tr><td><code>frequency_penalty</code></td><td>number</td><td>0</td><td>根据出现频率惩罚重复 token，通常范围为 <code>-2</code> 到 <code>2</code>。</td></tr>
-    <tr><td><code>logit_bias</code></td><td>object</td><td>null</td><td>以 token ID 为键、数值为值调整生成概率。</td></tr>
-    <tr><td><code>seed</code></td><td>integer</td><td>—</td><td>尽量复现结果的随机种子；只在支持的模型上生效，不能保证绝对一致。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
-
 ### 输出格式与推理
 
-<details class="request-field-details" open>
-<summary>输出格式与推理（4 个）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>response_format</code></td><td>object</td><td>设置输出格式。可使用 <code>{ "type": "text" }</code>、<code>{ "type": "json_object" }</code>，或使用 <code>json_schema</code> 约束 JSON 结构。</td></tr>
-    <tr><td><code>modalities</code></td><td>array</td><td>指定输出模态，可选 <code>text</code> 或 <code>audio</code>。</td></tr>
-    <tr><td><code>audio</code></td><td>object</td><td>音频输出配置，包含 <code>voice</code> 和 <code>format</code>；仅适用于支持音频的模型。</td></tr>
-    <tr><td><code>reasoning_effort</code></td><td>string</td><td>推理强度，可选 <code>low</code>、<code>medium</code>、<code>high</code>；仅适用于支持推理的模型。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
+输出格式、音频输出和推理强度参数请参阅上方请求体参数表。
 
 音频输出配置示例：
 
@@ -145,37 +127,11 @@
 
 ### 流式输出
 
-<details class="request-field-details" open>
-<summary>流式输出参数（2 个）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>stream</code></td><td>boolean</td><td>设置为 <code>true</code> 时以 SSE 增量事件返回结果，默认 <code>false</code>。</td></tr>
-    <tr><td><code>stream_options</code></td><td>object</td><td>流式选项，例如 <code>{ "include_usage": true }</code> 用于请求最终用量统计。仅在 <code>stream=true</code> 时使用。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
+设置 `stream` 为 `true` 后，接口会以 SSE 增量事件返回结果；如需在最终事件中获取用量统计，可同时设置 `stream_options.include_usage`。
 
 ### 工具调用
 
-<details class="request-field-details" open>
-<summary>工具调用参数（2 个）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>tools</code></td><td>array</td><td>声明模型可以调用的工具，目前最常见的是 <code>function</code> 工具。</td></tr>
-    <tr><td><code>tool_choice</code></td><td>string / object</td><td>控制工具调用策略：<code>none</code>、<code>auto</code>、<code>required</code>，或指定某个函数。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
-
-工具定义使用 `type` 和 `function` 对象。`function` 至少需要 `name`；可选 `description` 和 `parameters`（JSON Schema）。
+`tools` 和 `tool_choice` 的用途请参阅上方请求体参数表。工具定义使用 `type` 和 `function` 对象。`function` 至少需要 `name`；可选 `description` 和 `parameters`（JSON Schema）。
 
 ```json
 {
@@ -204,21 +160,6 @@
 | `tools[].function.description` | string | 函数用途说明。 |
 | `tools[].function.parameters` | object | JSON Schema 格式的参数定义。 |
 | `tool_choice` | string / object | `none`、`auto`、`required`，或 `{ "type": "function", "function": { "name": "..." } }`。 |
-
-### 请求管理
-
-<details class="request-field-details" open>
-<summary>请求管理参数（1 个）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>参数</th><th>类型</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>user</code></td><td>string</td><td>旧版终端用户标识字段；新项目请根据网关要求使用对应的安全标识字段。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
 
 ### 请求体示例
 

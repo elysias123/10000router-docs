@@ -5,7 +5,7 @@
   <code class="api-endpoint__path">/v1/moderations</code>
 </div>
 
-内容安全审核接口，用于检查文本是否违反使用政策。New API 使用 OpenAI 原生格式；请求体仅包含 `input` 和可选的 `model` 字段。
+内容安全审核接口，用于检查文本是否违反使用政策。接口使用 OpenAI 原生格式；请求体仅包含 `input` 和可选的 `model` 字段。
 
 ## 请求参数
 
@@ -37,10 +37,10 @@
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>参数</th><th>类型</th><th>必填</th><th>默认值</th><th>说明</th></tr></thead>
+  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>input</code></td><td>string | array&lt;string&gt;</td><td>是</td><td>—</td><td>要审核的文本。传入字符串时审核一段文本；传入字符串数组时逐项审核，并按输入顺序返回对应的 <code>results</code>。</td></tr>
-    <tr><td><code>model</code></td><td>string</td><td>否</td><td>—</td><td>审核模型 ID，例如 <code>text-moderation-latest</code> 或 <code>omni-moderation-latest</code>。省略时由 New API/上游选择默认模型。</td></tr>
+    <tr><td><code>input</code></td><td>string | array&lt;string&gt;</td><td>—</td><td>要审核的文本。传入字符串时审核一段文本；传入字符串数组时逐项审核，并按输入顺序返回对应的 <code>results</code>。</td><td>是</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>未声明</td><td>审核模型 ID，例如 <code>text-moderation-latest</code> 或 <code>omni-moderation-latest</code>。省略时由网关或上游选择默认模型。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>
@@ -304,4 +304,4 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
 - `violence`、`violence/graphic`：暴力内容及血腥暴力描写。
 - `illicit`、`illicit/violent`：非法活动及涉及暴力的非法活动。
 
-类别键集合由上游审核模型返回；请以实际响应为准。New API 的 OpenAPI 定义将 `categories` 和 `category_scores` 声明为可扩展对象，以兼容不同模型版本。
+类别键集合由上游审核模型返回；请以实际响应为准。网关的 OpenAPI 定义将 `categories` 和 `category_scores` 声明为可扩展对象，以兼容不同模型版本。

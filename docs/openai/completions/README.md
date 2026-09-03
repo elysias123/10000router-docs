@@ -5,7 +5,7 @@
   <code class="api-endpoint__path">/v1/completions</code>
 </div>
 
-传统文本补全接口。接口根据 `prompt` 生成一个或多个文本候选，适用于兼容旧版 Completion 模型的场景。以下字段与 New API 的 `CompletionRequest` 保持一致；网关不支持的模型或取值会返回 `400`。
+传统文本补全接口。接口根据 `prompt` 生成一个或多个文本候选，适用于兼容旧版 Completion 模型的场景。以下字段与 `CompletionRequest` 保持一致；网关不支持的模型或取值会返回 `400`。
 
 该接口主要用于兼容旧版 Completion 模型。文中的 `gpt-3.5-turbo-instruct` 仅作为传统模型示例，实际可用模型以当前账号配置和上游渠道为准；新项目应优先评估 Chat Completions 或 Responses 接口。
 
@@ -40,18 +40,18 @@
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>参数</th><th>类型</th><th>必填</th><th>默认值</th><th>说明</th></tr></thead>
+  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>model</code></td><td>string</td><td>是</td><td>—</td><td>要调用的模型 ID，例如 <code>gpt-3.5-turbo-instruct</code>。</td></tr>
-    <tr><td><code>prompt</code></td><td>string / array</td><td>是</td><td>—</td><td>用于补全的提示词。可以传入单个字符串或字符串数组；数组中的每个元素会独立生成结果。</td></tr>
-    <tr><td><code>max_tokens</code></td><td>integer</td><td>否</td><td>16</td><td>限制每个提示词生成的最大 token 数。总上下文长度不能超过模型上限。</td></tr>
-    <tr><td><code>temperature</code></td><td>number</td><td>否</td><td>1</td><td>控制采样随机性，通常范围为 <code>0</code> 到 <code>2</code>。值越低，输出越确定。</td></tr>
-    <tr><td><code>top_p</code></td><td>number</td><td>否</td><td>1</td><td>核采样范围，通常为 <code>0</code> 到 <code>1</code>。一般只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td></tr>
-    <tr><td><code>n</code></td><td>integer</td><td>否</td><td>1</td><td>为每个提示词生成的候选数量。大于 <code>1</code> 会按候选数量增加用量。</td></tr>
-    <tr><td><code>stream</code></td><td>boolean</td><td>否</td><td>false</td><td>设置为 <code>true</code> 时以 Server-Sent Events（SSE）增量返回结果；设置为 <code>false</code> 时返回完整 JSON。</td></tr>
-    <tr><td><code>stop</code></td><td>string / array</td><td>否</td><td>null</td><td>命中停止序列后结束生成。可传入一个字符串或字符串数组，最多 4 个停止序列。</td></tr>
-    <tr><td><code>suffix</code></td><td>string</td><td>否</td><td>null</td><td>插入补全文本时使用的后缀，仅适用于支持 infill 的模型。</td></tr>
-    <tr><td><code>echo</code></td><td>boolean</td><td>否</td><td>false</td><td>是否在每个结果的 <code>text</code> 前回显输入的提示词。</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>—</td><td>要调用的模型 ID，例如 <code>gpt-3.5-turbo-instruct</code>。</td><td>是</td></tr>
+    <tr><td><code>prompt</code></td><td>string / array</td><td>—</td><td>用于补全的提示词。可以传入单个字符串或字符串数组；数组中的每个元素会独立生成结果。</td><td>是</td></tr>
+    <tr><td><code>max_tokens</code></td><td>integer</td><td>未声明</td><td>限制每个提示词生成的最大 token 数。总上下文长度不能超过模型上限。</td><td>否</td></tr>
+    <tr><td><code>temperature</code></td><td>number</td><td>未声明</td><td>控制采样随机性，具体范围由模型决定。</td><td>否</td></tr>
+    <tr><td><code>top_p</code></td><td>number</td><td>未声明</td><td>核采样范围，具体范围由模型决定。一般只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td><td>否</td></tr>
+    <tr><td><code>n</code></td><td>integer</td><td>未声明</td><td>为每个提示词生成的候选数量。</td><td>否</td></tr>
+    <tr><td><code>stream</code></td><td>boolean</td><td>未声明</td><td>设置为 <code>true</code> 时以 Server-Sent Events（SSE）增量返回结果；设置为 <code>false</code> 时返回完整 JSON。</td><td>否</td></tr>
+    <tr><td><code>stop</code></td><td>string / array</td><td>未声明</td><td>命中停止序列后结束生成，可传入一个字符串或字符串数组。</td><td>否</td></tr>
+    <tr><td><code>suffix</code></td><td>string</td><td>未声明</td><td>插入补全文本时使用的后缀，仅适用于支持 infill 的模型。</td><td>否</td></tr>
+    <tr><td><code>echo</code></td><td>boolean</td><td>未声明</td><td>是否在每个结果的 <code>text</code> 前回显输入的提示词。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>

@@ -5,7 +5,7 @@
   <code class="api-endpoint__path">/v1/embeddings</code>
 </div>
 
-将文本转换为向量嵌入。New API 兼容 OpenAI 的 Embeddings 请求格式；实际可用的模型由网关配置决定。
+将文本转换为向量嵌入
 
 ## 请求参数
 
@@ -29,31 +29,19 @@
 
 ### 请求体
 
-请求体必须使用 <code>application/json</code>。以下字段与 New API 的原生 OpenAI 格式定义一致；未列出的字段不属于此接口的通用请求参数。
+请求体必须使用 <code>application/json</code>。以下字段与原生 OpenAI 格式定义一致；未列出的字段不属于此接口的通用请求参数。
 
 <details class="request-field-details" open>
-<summary>必填参数（2 个）</summary>
+<summary>请求体参数（4 个）</summary>
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>model</code></td><td>string</td><td>是</td><td>要调用的嵌入模型 ID，例如 <code>text-embedding-3-small</code>。模型必须已在 NewAPI 渠道中配置。</td></tr>
-    <tr><td><code>input</code></td><td>string | array&lt;string&gt;</td><td>是</td><td>要嵌入的文本。可以传入单个字符串，或传入字符串数组以批量生成多个向量；数组中的每一项都必须是字符串。</td></tr>
-  </tbody>
-</table>
-</div>
-</details>
-
-<details class="request-field-details" open>
-<summary>可选参数（2 个）</summary>
-
-<div class="request-field-details__content">
-<table>
-  <thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
-  <tbody>
-    <tr><td><code>encoding_format</code></td><td>string</td><td><code>float</code></td><td>向量编码格式。可选值为 <code>float</code>（浮点数数组）或 <code>base64</code>（Base64 编码）；具体行为取决于上游模型和渠道。</td></tr>
-    <tr><td><code>dimensions</code></td><td>integer</td><td>模型默认维度</td><td>输出向量维度。仅在模型支持自定义维度时生效；不支持时请省略此字段。</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>—</td><td>要调用的嵌入模型 ID，例如 <code>text-embedding-3-small</code>。模型必须已在网关渠道中配置。</td><td>是</td></tr>
+    <tr><td><code>input</code></td><td>string | array&lt;string&gt;</td><td>—</td><td>要嵌入的文本。可以传入单个字符串，或传入字符串数组以批量生成多个向量；数组中的每一项都必须是字符串。</td><td>是</td></tr>
+    <tr><td><code>encoding_format</code></td><td>string</td><td><code>float</code></td><td>向量编码格式。可选值为 <code>float</code>（浮点数数组）或 <code>base64</code>（Base64 编码）；具体行为取决于上游模型和渠道。</td><td>否</td></tr>
+    <tr><td><code>dimensions</code></td><td>integer</td><td>模型默认维度</td><td>输出向量维度。仅在模型支持自定义维度时生效；不支持时请省略此字段。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>
@@ -314,14 +302,3 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
 ```
 
 请根据 <code>error.type</code>、<code>error.param</code> 和 HTTP 状态码定位问题；修正请求参数后再重试，避免对参数错误进行重复重试。
-
-## 旧版兼容路径
-
-部分客户端仍使用旧版引擎路径：
-
-<div class="api-endpoint" role="group" aria-label="API endpoint">
-  <span class="api-endpoint__method">POST</span>
-  <code class="api-endpoint__path">/v1/engines/{model}/embeddings</code>
-</div>
-
-请求体格式与 `/v1/embeddings` 相同；路径中的 `{model}` 替换为模型 ID。新项目建议使用 `/v1/embeddings`，以便与 OpenAI SDK 保持一致。

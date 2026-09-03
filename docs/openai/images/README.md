@@ -6,4 +6,7 @@
 
 - [生成图像](generations.md)
 - [编辑图像](edits.md)
-- [异步图像任务](async.md)
+- [创建异步生成任务](async.md)
+- [创建异步编辑任务](async-edits.md)
+- [查询异步任务](async-task.md)
+- [下载异步结果](async-content.md)
