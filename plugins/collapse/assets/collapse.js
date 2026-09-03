@@ -63,11 +63,25 @@
     }
   }
 
+  function ensureBrand(summary) {
+    if (summary.querySelector(".book-summary-brand")) {
+      return;
+    }
+
+    var brand = document.createElement("a");
+    brand.className = "book-summary-brand";
+    brand.href = "https://10000router.com";
+    brand.textContent = "https://10000router.com";
+    summary.insertBefore(brand, summary.firstElementChild);
+  }
+
   function initialize() {
     var summary = document.querySelector(".book-summary");
     if (!summary) {
       return;
     }
+
+    ensureBrand(summary);
 
     var items = summary.querySelectorAll("li.chapter");
     var state = loadState();
