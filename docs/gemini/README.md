@@ -4,8 +4,7 @@
 
 ## 接口目录
 
-- [聊天](chat/README.md)
-- [音频](audio/README.md)
-- [嵌入](embeddings/README.md)
-- [图像](images/README.md)
-- [模型](../models/README.md)
+- [音频（Audio）](audio/README.md)
+- [聊天（Chat）](chat/README.md)
+- [图像（Images）](images/README.md)
+- [嵌入（Embeddings）](embeddings/README.md)

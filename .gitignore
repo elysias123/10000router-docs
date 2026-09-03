@@ -49,3 +49,7 @@ apifox-local.png
 .env.*
 !.env.example
 .playwright-mcp
+
+# Tests and coverage reports
+coverage/
+test

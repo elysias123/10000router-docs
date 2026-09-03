@@ -41,7 +41,7 @@
 
 ## 测试流程
 
-- 网页测试均使用playwright mcp 测试进行网页测试,如果`http://localhost:4000`无法访问,请检查是否启动了`pnpm run dev`
+- 网页测试均使用playwright-mcp 测试进行网页测试,如果`http://localhost:4000`无法访问,请检查是否启动了`pnpm run dev`
 
 ## api参考对象
 

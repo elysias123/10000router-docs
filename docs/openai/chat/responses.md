@@ -5,9 +5,7 @@
   <code class="api-endpoint__path">/v1/responses</code>
 </div>
 
-根据对话历史创建模型响应,用于创建模型响应。 支持多轮对话、工具调用、推理等功能
-
-兼容 OpenAI Responses API
+OpenAI Responses API，用于创建模型响应。支持多轮对话、工具调用和推理等功能。
 
 ## 请求参数
 
@@ -29,7 +27,7 @@
 </details>
 </div>
 
-下表为 NewAPI 文档当前列出的字段；字段是否对具体模型生效仍取决于上游渠道
+下表按 Responses API 的调用语义列出当前文档字段；字段是否对具体模型生效仍取决于上游渠道。
 
 <details class="request-field-details" open>
 <summary>请求体字段（12 个）</summary>
@@ -56,6 +54,14 @@
 </details>
 
 > `input` 在 OpenAPI 文档中标记为可选，但创建响应时通常仍应提供输入内容；`model` 是唯一标记为必填的字段。
+
+### 字段边界
+
+- **调用必需字段**：`model` 必须填写；虽然 `input` 在 schema 中标记为可选，但实际创建响应时应提供 `input`。
+- **Responses 专属字段**：`instructions`、`max_output_tokens`、`reasoning`、`previous_response_id` 和 `truncation` 用于 Responses 的系统指令、输出限制、推理、多轮关联和上下文截断控制。
+- **通用或模型相关字段**：`temperature`、`top_p`、`stream`、`tools` 和 `tool_choice` 是否可用取决于目标模型。`max_output_tokens` 是 Responses 字段，不等同于 Chat Completions 的 `max_completion_tokens`。
+
+文档中的字段表示网关请求格式支持的入口；上游模型不支持的字段仍可能返回 `400`，请以目标模型能力为准。
 
 ## 请求示例
 

@@ -6,7 +6,7 @@
   <code class="api-endpoint__path">/v1/chat/completions</code>
 </div>
 
-根据对话历史创建模型响应。支持流式和非流式响应，兼容 OpenAI Chat Completions API。
+根据对话历史创建模型响应。支持流式和非流式响应，兼容 OpenAI Chat Completions API
 
 ## 请求参数
 

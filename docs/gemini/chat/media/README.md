@@ -27,8 +27,8 @@ Gemini 图像、PDF、音频和视频识别请求。
 
 <div class="parameter-details-group">
 <details class="parameter-details" open>
-<summary>Authorization</summary>
-<div class="parameter-details__content"><p>使用 Bearer Token 认证。<br>格式: <code>Authorization: Bearer sk-xxxxxx</code></p></div>
+<summary>x-goog-api-key</summary>
+<div class="parameter-details__content"><p>使用 Gemini API Key 认证。<br>格式: <code>x-goog-api-key: sk-xxxxxx</code></p></div>
 </details>
 
 <details class="parameter-details" open>
@@ -104,7 +104,7 @@ Gemini 图像、PDF、音频和视频识别请求。
   <div class="request-example-tabs" aria-label="选择编程语言"><label for="gemini-media-example-curl">cURL</label><label for="gemini-media-example-javascript">JavaScript</label><label for="gemini-media-example-go">Go</label><label for="gemini-media-example-python">Python</label><label for="gemini-media-example-java">Java</label><label for="gemini-media-example-csharp">C#</label></div>
   <div class="request-example-panels">
     <div class="request-example-panel request-example-panel-curl"><pre><code class="language-bash">curl -X POST "https://10000router.com/v1beta/models/gemini-2.5-pro:generateContent" \
-  -H "Authorization: Bearer $GEMINI_API_KEY" \
+  -H "x-goog-api-key: $GEMINI_API_KEY" \
   -H "Content-Type: application/json" \
   -d @request.json</code></pre></div>
     <div class="request-example-panel request-example-panel-javascript"><pre><code class="language-javascript">import { readFile } from "node:fs/promises";
@@ -117,7 +117,7 @@ const payload = {
 };
 const response = await fetch("https://10000router.com/v1beta/models/gemini-2.5-pro:generateContent", {
   method: "POST",
-  headers: { Authorization: "Bearer " + process.env.GEMINI_API_KEY, "Content-Type": "application/json" },
+  headers: { "x-goog-api-key": process.env.GEMINI_API_KEY, "Content-Type": "application/json" },
   body: JSON.stringify(payload)
 });
 console.log(await response.json());</code></pre></div>
@@ -125,7 +125,7 @@ console.log(await response.json());</code></pre></div>
 if err != nil { log.Fatal(err) }
 payload := fmt.Sprintf(`{"contents":[{"role":"user","parts":[{"text":"描述图片"},{"inlineData":{"mimeType":"image/jpeg","data":"%s"}}]}]}`, base64.StdEncoding.EncodeToString(data))
 req, _ := http.NewRequest("POST", "https://10000router.com/v1beta/models/gemini-2.5-pro:generateContent", strings.NewReader(payload))
-req.Header.Set("Authorization", "Bearer "+os.Getenv("GEMINI_API_KEY"))
+req.Header.Set("x-goog-api-key", os.Getenv("GEMINI_API_KEY"))
 req.Header.Set("Content-Type", "application/json")
 res, err := http.DefaultClient.Do(req)
 if err != nil { log.Fatal(err) }
@@ -141,7 +141,7 @@ payload = {
 }
 response = requests.post(
     "https://10000router.com/v1beta/models/gemini-2.5-pro:generateContent",
-    headers={"Authorization": "Bearer " + os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"},
+    headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"},
     json=payload,
 )
 print(response.json())</code></pre></div>
@@ -149,14 +149,14 @@ print(response.json())</code></pre></div>
 var data = java.util.Base64.getEncoder().encodeToString(bytes);
 var payload = "{\"contents\":[{\"role\":\"user\",\"parts\":[{\"text\":\"描述图片\"},{\"inlineData\":{\"mimeType\":\"image/jpeg\",\"data\":\"" + data + "\"}}]}]}";
 var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create("https://10000router.com/v1beta/models/gemini-2.5-pro:generateContent"))
-    .header("Authorization", "Bearer " + System.getenv("GEMINI_API_KEY"))
+    .header("x-goog-api-key", System.getenv("GEMINI_API_KEY"))
     .header("Content-Type", "application/json")
     .POST(java.net.http.HttpRequest.BodyPublishers.ofString(payload))
     .build();
 var response = java.net.http.HttpClient.newHttpClient().send(request, java.net.http.HttpResponse.BodyHandlers.ofString());</code></pre></div>
     <div class="request-example-panel request-example-panel-csharp"><pre><code class="language-csharp">using System.Net.Http.Json;
 using var client = new HttpClient();
-client.DefaultRequestHeaders.Authorization = new("Bearer", Environment.GetEnvironmentVariable("GEMINI_API_KEY"));
+client.DefaultRequestHeaders.Add("x-goog-api-key", Environment.GetEnvironmentVariable("GEMINI_API_KEY"));
 var data = Convert.ToBase64String(await File.ReadAllBytesAsync("photo.jpg"));
 var payload = new {
     contents = new[] {

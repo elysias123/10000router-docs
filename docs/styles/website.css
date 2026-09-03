@@ -577,6 +577,10 @@ html, body {
   overscroll-behavior-x: contain;
 }
 
+.parameter-details__content {
+  padding-left: 5px;
+}
+
 .response-field-details__content table,
 .request-field-details__content table {
   margin: 0 0 14px;
