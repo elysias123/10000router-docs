@@ -5,17 +5,19 @@
   <code class="api-endpoint__path">/v1/messages</code>
 </div>
 
+Anthropic Claude Messages API 格式的请求，使用 JSON 请求体创建消息。请求必须包含 `anthropic-version`，并使用 `Authorization` `Bearer` Token 或 `x-api-key` 其中一种方式认证；可用字段和具体能力取决于目标模型及上游渠道。
+
 ## 请求参数
 
 ### 请求头
 
 <div class="parameter-details-group">
 <details class="parameter-details" open>
-<summary>Authorization</summary>
+<summary>Authorization [可选]</summary>
 
 <div class="parameter-details__content">
-<p>使用 Bearer Token 认证。<br>
-格式: <code>Authorization: Bearer sk-xxxxxx</code></p>
+<p>使用网关 API Key 的 Bearer Token 认证。与 <code>x-api-key</code> 二选一。<br>
+格式：<code>Authorization: Bearer sk-xxxxxx</code></p>
 </div>
 </details>
 
@@ -23,8 +25,8 @@
 <summary>x-api-key [可选]</summary>
 
 <div class="parameter-details__content">
-<p>Anthropic API Key。使用此请求头时，可以不发送 <code>Authorization</code>。<br>
-格式: <code>x-api-key: sk-ant-xxxxxx</code></p>
+<p>Anthropic 兼容认证请求头。使用此请求头时，可以不发送 <code>Authorization</code>。<br>
+格式：<code>x-api-key: sk-ant-xxxxxx</code></p>
 </div>
 </details>
 
@@ -33,7 +35,7 @@
 
 <div class="parameter-details__content">
 <p>Anthropic API 版本，必填。当前示例使用 <code>2023-06-01</code>。<br>
-格式: <code>anthropic-version: 2023-06-01</code></p>
+格式：<code>anthropic-version: 2023-06-01</code></p>
 </div>
 </details>
 
@@ -47,28 +49,28 @@
 
 下表列出网关当前支持的请求字段；字段是否生效仍取决于目标模型和上游渠道。
 
-### 请求体字段
+### 请求体
 
 <details class="request-field-details" open>
 <summary>顶层字段（13 个）</summary>
 
 <div class="request-field-details__content">
 <table>
-  <thead><tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+  <thead><tr><th>字段</th><th>类型</th><th>说明</th><th>是否必填</th></tr></thead>
   <tbody>
-    <tr><td><code>model</code></td><td>string</td><td>是</td><td>目标模型 ID。请使用当前账号可用的 Claude 模型。</td></tr>
-    <tr><td><code>messages</code></td><td>array</td><td>是</td><td>按时间顺序排列的对话消息。每条消息包含 <code>role</code> 和 <code>content</code>。</td></tr>
-    <tr><td><code>system</code></td><td>string / array</td><td>否</td><td>系统提示词或系统内容块。</td></tr>
-    <tr><td><code>max_tokens</code></td><td>integer</td><td>是</td><td>本次响应允许生成的最大 token 数，最小值为 <code>1</code>。</td></tr>
-    <tr><td><code>temperature</code></td><td>number</td><td>否</td><td>采样温度，范围为 <code>0</code> 到 <code>1</code>。</td></tr>
-    <tr><td><code>top_p</code></td><td>number</td><td>否</td><td>核采样参数。通常只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td></tr>
-    <tr><td><code>top_k</code></td><td>integer</td><td>否</td><td>限制每一步采样时考虑的候选 token 数量。</td></tr>
-    <tr><td><code>stream</code></td><td>boolean</td><td>否</td><td>是否使用 SSE 流式返回；未设置时默认非流式（<code>false</code>），建议按需显式设置。</td></tr>
-    <tr><td><code>stop_sequences</code></td><td>array&lt;string&gt;</td><td>否</td><td>命中任一停止序列后结束生成。</td></tr>
-    <tr><td><code>tools</code></td><td>array</td><td>否</td><td>声明 Claude 可以调用的工具。</td></tr>
-    <tr><td><code>tool_choice</code></td><td>object</td><td>否</td><td>控制工具选择策略：<code>auto</code>、<code>any</code> 或指定 <code>tool</code>。</td></tr>
-    <tr><td><code>thinking</code></td><td>object</td><td>否</td><td>配置扩展思考；是否支持取决于目标模型。</td></tr>
-    <tr><td><code>metadata</code></td><td>object</td><td>否</td><td>请求元数据。当前 OpenAPI 定义列出 <code>user_id</code> 字段。</td></tr>
+    <tr><td><code>model</code></td><td>string</td><td>目标模型 ID。请使用当前账号可用的模型。</td><td>是</td></tr>
+    <tr><td><code>messages</code></td><td>array</td><td>按时间顺序排列的对话消息。每条消息包含 <code>role</code> 和 <code>content</code>。</td><td>是</td></tr>
+    <tr><td><code>system</code></td><td>string / array</td><td>系统提示词或系统内容块。</td><td>否</td></tr>
+    <tr><td><code>max_tokens</code></td><td>integer</td><td>本次响应允许生成的最大 token 数，最小值为 <code>1</code>。</td><td>是</td></tr>
+    <tr><td><code>temperature</code></td><td>number</td><td>采样温度，范围为 <code>0</code> 到 <code>1</code>。</td><td>否</td></tr>
+    <tr><td><code>top_p</code></td><td>number</td><td>核采样参数。通常只调整 <code>temperature</code> 或 <code>top_p</code> 其中一个。</td><td>否</td></tr>
+    <tr><td><code>top_k</code></td><td>integer</td><td>限制每一步采样时考虑的候选 token 数量。</td><td>否</td></tr>
+    <tr><td><code>stream</code></td><td>boolean</td><td>是否使用 SSE 流式返回；未设置时默认非流式（<code>false</code>）。</td><td>否</td></tr>
+    <tr><td><code>stop_sequences</code></td><td>array&lt;string&gt;</td><td>命中任一停止序列后结束生成。</td><td>否</td></tr>
+    <tr><td><code>tools</code></td><td>array</td><td>声明 Claude 可以调用的工具。</td><td>否</td></tr>
+    <tr><td><code>tool_choice</code></td><td>object</td><td>控制工具选择策略：<code>auto</code>、<code>any</code> 或指定 <code>tool</code>。</td><td>否</td></tr>
+    <tr><td><code>thinking</code></td><td>object</td><td>配置扩展思考；是否支持取决于目标模型。</td><td>否</td></tr>
+    <tr><td><code>metadata</code></td><td>object</td><td>请求元数据。当前 schema 列出 <code>user_id</code> 字段。</td><td>否</td></tr>
   </tbody>
 </table>
 </div>
@@ -78,12 +80,22 @@
 
 `messages` 中每项的 `role` 为 `user` 或 `assistant`。`content` 可以是字符串，也可以是内容块数组。
 
-| 内容块类型 | 主要字段 | 用途 |
-| --- | --- | --- |
-| `text` | `text` | 文本输入或输出。 |
-| `image` | `source` | 图像输入，支持 Base64 或 URL。 |
-| `tool_use` | `id`、`name`、`input` | Claude 发起工具调用时返回。 |
-| `tool_result` | `tool_use_id`、`content` | 客户端执行工具后回传结果。 |
+<details class="request-field-details" open>
+<summary>消息与内容块字段</summary>
+
+<div class="request-field-details__content">
+<table>
+  <thead><tr><th>内容块类型</th><th>主要字段</th><th>用途</th></tr></thead>
+  <tbody>
+    <tr><td><code>text</code></td><td><code>text</code></td><td>文本输入或输出。</td></tr>
+    <tr><td><code>image</code></td><td><code>source</code></td><td>图像输入，支持 Base64 或 URL。</td></tr>
+    <tr><td><code>tool_use</code></td><td><code>id</code>、<code>name</code>、<code>input</code></td><td>Claude 发起工具调用时返回。</td></tr>
+    <tr><td><code>tool_result</code></td><td><code>tool_use_id</code>、<code>content</code></td><td>客户端执行工具后回传结果。</td></tr>
+  </tbody>
+</table>
+
+</div>
+</details>
 
 文本消息示例：
 
@@ -201,7 +213,7 @@ Claude 返回 `stop_reason: "tool_use"` 时，遍历 `content` 找到 `tool_use`
 
 <div class="request-field-details__content">
 <pre><code class="language-json">{
-  &quot;model&quot;: &quot;claude-3-5-sonnet-20241022&quot;,
+  &quot;model&quot;: &quot;gpt-5.6-sol&quot;,
   &quot;system&quot;: &quot;你是一个简洁、准确的助手。&quot;,
   &quot;messages&quot;: [
     { &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;用三句话介绍 Claude Messages API。&quot; }
@@ -237,7 +249,7 @@ Claude 返回 `stop_reason: "tool_use"` 时，遍历 `content` 找到 `tool_use`
   -H "anthropic-version: 2023-06-01" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "claude-3-5-sonnet-20241022",
+    "model": "gpt-5.6-sol",
     "max_tokens": 256,
     "messages": [
       {"role": "user", "content": "用三句话介绍 Claude Messages API。"}
@@ -246,7 +258,7 @@ Claude 返回 `stop_reason: "tool_use"` 时，遍历 `content` 找到 `tool_use`
     </div>
     <div class="request-example-panel request-example-panel-javascript">
       <pre><code class="language-javascript">const payload = {
-  model: "claude-3-5-sonnet-20241022",
+  model: "gpt-5.6-sol",
   max_tokens: 256,
   messages: [
     { role: "user", content: "用三句话介绍 Claude Messages API。" }
@@ -268,7 +280,7 @@ console.log(await response.json());</code></pre>
     </div>
     <div class="request-example-panel request-example-panel-go">
       <pre><code class="language-go">payload := strings.NewReader(`{
-  "model": "claude-3-5-sonnet-20241022",
+  "model": "gpt-5.6-sol",
   "max_tokens": 256,
   "messages": [
     {"role": "user", "content": "用三句话介绍 Claude Messages API。"}
@@ -296,7 +308,7 @@ io.Copy(os.Stdout, res.Body)</code></pre>
 import requests
 
 payload = {
-    "model": "claude-3-5-sonnet-20241022",
+    "model": "gpt-5.6-sol",
     "max_tokens": 256,
     "messages": [
         {"role": "user", "content": "用三句话介绍 Claude Messages API。"}
@@ -318,7 +330,7 @@ print(response.json())</code></pre>
     <div class="request-example-panel request-example-panel-java">
       <pre><code class="language-java">var client = java.net.http.HttpClient.newHttpClient();
 var payload = "{"
-    + "\"model\":\"claude-3-5-sonnet-20241022\","
+    + "\"model\":\"gpt-5.6-sol\","
     + "\"max_tokens\":256,"
     + "\"messages\":[{\"role\":\"user\","
     + "\"content\":\"用三句话介绍 Claude Messages API。\"}]}";
@@ -333,6 +345,9 @@ var response = client.send(
     request,
     java.net.http.HttpResponse.BodyHandlers.ofString()
 );
+if (response.statusCode() >= 400) {
+    throw new IllegalStateException(response.body());
+}
 System.out.println(response.body());</code></pre>
     </div>
     <div class="request-example-panel request-example-panel-csharp">
@@ -347,7 +362,7 @@ client.DefaultRequestHeaders.Add("anthropic-version", "2023-06-01");
 
 var payload = new
 {
-    model = "claude-3-5-sonnet-20241022",
+    model = "gpt-5.6-sol",
     max_tokens = 256,
     messages = new[]
     {
@@ -385,7 +400,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
   "id": "msg_01ABC123",
   "type": "message",
   "role": "assistant",
-  "model": "claude-3-5-sonnet-20241022",
+  "model": "gpt-5.6-sol",
   "content": [
     {
       "type": "text",
@@ -429,7 +444,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
   "id": "msg_01ABC123",
   "type": "message",
   "role": "assistant",
-  "model": "claude-3-5-sonnet-20241022",
+  "model": "gpt-5.6-sol",
   "content": [
     {
       "type": "text",
@@ -504,7 +519,7 @@ Console.WriteLine(await response.Content.ReadAsStringAsync());</code></pre>
 
 ```text
 event: message_start
-data: {"type":"message_start","message":{"id":"msg_01ABC123","type":"message","role":"assistant","content":[],"model":"claude-3-5-sonnet-20241022","stop_reason":null}}
+data: {"type":"message_start","message":{"id":"msg_01ABC123","type":"message","role":"assistant","content":[],"model":"gpt-5.6-sol","stop_reason":null}}
 
 event: content_block_start
 data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}

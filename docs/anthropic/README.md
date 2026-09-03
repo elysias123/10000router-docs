@@ -1,6 +1,6 @@
 # Anthropic格式
 
-10000Router 支持 Anthropic Claude 原生 Messages API 协议。请求使用 `/v1/messages`，响应保持 Claude 消息格式；认证方式使用网关 API Key。
+10000Router 支持 Anthropic Claude 原生 Messages API 协议。具体参数、响应和兼容性说明请参阅对应端点页面。
 
 ## 索引
 
