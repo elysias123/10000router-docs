@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "honkit-collapse-state-v1";
+  var STORAGE_KEY = "honkit-collapse-state-v2";
 
   function getDirectChild(element, selector) {
     for (var i = 0; i < element.children.length; i += 1) {
@@ -114,13 +114,11 @@
         item.insertBefore(button, link);
 
         var hasStoredState = Object.prototype.hasOwnProperty.call(state, item.dataset.collapseKey);
-        var hasActiveChild = !!children.querySelector("li.active");
-        var isActiveParent = item.classList.contains("active");
-        var initiallyExpanded = hasActiveChild || isActiveParent;
+        var initiallyExpanded = true;
 
-        // Restore the user's choice after HonKit replaces the sidebar. When
-        // there is no choice yet, open only the active branch; this initial
-        // expansion is remembered so navigation never closes it implicitly.
+        // Restore the user's choice after HonKit replaces the sidebar. New
+        // users see every section expanded, while manual collapse choices
+        // remain effective on later page changes.
         setExpanded(
           item,
           hasStoredState ? state[item.dataset.collapseKey] === true : initiallyExpanded,
